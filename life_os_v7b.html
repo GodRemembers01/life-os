@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="My Life OS">
+<title>My Life OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F0E8;--surface:#FDFAF5;--surface2:#F0EBE0;--surface3:#E8E2D8;
+  --ink:#2A2520;--ink2:#6B6258;--ink3:#A89F94;
+  --sage:#6B8F71;--sage-l:#B8D4BB;--sage-ll:#E4EFE5;--sage-d:#4A6B50;
+  --terra:#B86A4A;--terra-l:#DFA882;--terra-ll:#F5E6DC;
+  --gold:#C09A50;--gold-l:#E8D4A0;--gold-ll:#FBF4E3;
+  --lav:#8A7AAF;--lav-l:#C4B8DC;--lav-ll:#EDE9F5;
+  --sky:#5A8FAF;--sky-l:#A8C8DC;--sky-ll:#E3EEF5;
+  --rose:#B87A7A;--rose-ll:#F5E8E8;
+  --teal:#5A9A8F;--teal-ll:#E3F2F0;
+  --border:rgba(42,37,32,0.09);--radius:14px;--shadow:0 2px 12px rgba(42,37,32,0.06);
+  --nav-h:52px;--bottom-h:66px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;display:flex;flex-direction:column}
+
+/* ── NAV ── */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;padding:0 14px;gap:8px;position:fixed;top:0;left:0;right:0;z-index:300}
+.brand{font-family:'Lora',serif;font-size:1rem;color:var(--ink);display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
+.brand-dot{width:7px;height:7px;border-radius:50%;background:var(--terra)}
+.nav-tabs{display:flex;gap:1px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex:1}
+.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{padding:5px 11px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:0.72rem;font-weight:400;color:var(--ink3);cursor:pointer;border-radius:20px;transition:all .2s;white-space:nowrap}
+.ntab:hover{background:var(--surface2);color:var(--ink2)}
+.ntab.active{background:var(--ink);color:white}
+.mode-badge{padding:4px 10px;border-radius:20px;font-size:.67rem;font-weight:600;text-transform:uppercase;cursor:pointer;border:none;white-space:nowrap;flex-shrink:0}
+.mode-badge.weekday{background:var(--sage);color:white}
+.mode-badge.weekend{background:var(--gold);color:white}
+
+/* ── SCROLL ── */
+.scroll-area{position:fixed;top:var(--nav-h);bottom:var(--bottom-h);left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{display:none;padding:14px 14px 32px;max-width:560px;margin:0 auto;animation:fadeUp .2s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-h);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 14px;z-index:300;gap:10px}
+.token-display{display:flex;align-items:center;gap:8px;cursor:pointer;flex:1}
+.token-jar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#D4AA60);display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 8px rgba(192,154,80,.35);flex-shrink:0}
+.token-info{flex:1;min-width:0}
+.token-count-label{font-size:.59rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600}
+.token-num{font-family:'Lora',serif;font-size:1rem;font-weight:500;color:var(--gold);line-height:1}
+.tmini-row{display:flex;gap:3px}
+.tmini{width:7px;height:7px;border-radius:50%;background:var(--gold-l);border:1.5px solid var(--gold);transition:all .2s}
+.tmini.filled{background:var(--gold)}
+.bottom-btns{display:flex;gap:7px;flex-shrink:0}
+.close-day-btn{padding:8px 13px;background:var(--terra);color:white;border:none;border-radius:20px;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.earn-btn{padding:8px 12px;background:var(--gold);color:white;border:none;border-radius:20px;font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer}
+
+/* ── UTILS ── */
+.sec{font-size:.61rem;text-transform:uppercase;letter-spacing:.13em;color:var(--ink3);font-weight:600;margin-bottom:7px;margin-top:2px}
+.card{background:var(--surface);border-radius:var(--radius);padding:14px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:11px}
+.divider{height:1px;background:var(--border);margin:12px 0}
+textarea.note{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;font-family:'Outfit',sans-serif;font-size:.84rem;color:var(--ink);resize:none;line-height:1.6;outline:none;transition:border-color .2s}
+textarea.note:focus{border-color:var(--sage)}
+textarea.note::placeholder{color:var(--ink3)}
+input.inp{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:.83rem;color:var(--ink);outline:none;width:100%}
+input.inp:focus{border-color:var(--terra)}
+input.inp::placeholder{color:var(--ink3)}
+select.sel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 11px;font-family:'Outfit',sans-serif;font-size:.8rem;color:var(--ink2);outline:none;cursor:pointer}
+.btn{border:none;border-radius:10px;padding:8px 14px;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-terra{background:var(--terra);color:white}
+.btn-sage{background:var(--sage);color:white}
+.btn-lav{background:var(--lav);color:white}
+.btn-gold{background:var(--gold);color:white}
+.btn-ghost{background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}
+.btn-sm{padding:5px 10px;font-size:.71rem;border-radius:8px}
+.row{display:flex;gap:7px;align-items:flex-start}
+.ml-auto{margin-left:auto}
+.flex-c{display:flex;align-items:center;gap:7px}
+.mt{margin-top:12px}
+
+/* ── HERO ── */
+.hero{border-radius:16px;padding:18px 20px;color:white;margin-bottom:13px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none}
+.hero-ey{font-size:.59rem;text-transform:uppercase;letter-spacing:.14em;opacity:.75;margin-bottom:3px}
+.hero-title{font-family:'Lora',serif;font-size:1.3rem;font-weight:400;margin-bottom:2px}
+.hero-sub{font-size:.77rem;opacity:.85;line-height:1.45;position:relative;z-index:1}
+.h-sage{background:linear-gradient(135deg,var(--sage),var(--sage-d))}
+.h-terra{background:linear-gradient(135deg,var(--terra),#9A5030)}
+.h-rose{background:linear-gradient(135deg,var(--rose),#8A5A5A)}
+.h-lav{background:linear-gradient(135deg,var(--lav),#6A5A9F)}
+.h-sky{background:linear-gradient(135deg,var(--sky),#3A6F8F)}
+.h-gold{background:linear-gradient(135deg,var(--gold),#A07830)}
+.h-weekend{background:linear-gradient(135deg,#C09A50,#D4B06A)}
+
+/* ── DROPDOWN SECTIONS ── */
+.drop-section{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+.drop-header{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;user-select:none;transition:background .15s}
+.drop-header:hover{background:var(--surface2)}
+.drop-icon{font-size:.95rem;flex-shrink:0}
+.drop-title{font-size:.88rem;font-weight:500;flex:1;color:var(--ink)}
+.drop-meta{font-size:.68rem;color:var(--ink3);margin-right:4px}
+.drop-arrow{font-size:.7rem;color:var(--ink3);transition:transform .25s;flex-shrink:0}
+.drop-arrow.open{transform:rotate(180deg)}
+.drop-body{display:none;border-top:1px solid var(--border);padding:13px 14px}
+.drop-body.open{display:block;animation:fadeUp .18s ease}
+
+/* ── WEEK AT A GLANCE ── */
+.wag-day{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
+.wag-day.today-day{border-color:var(--terra);border-width:2px}
+.wag-day-header{display:flex;align-items:center;gap:9px;padding:11px 13px;cursor:pointer;user-select:none}
+.wag-day-header:hover{background:var(--surface2)}
+.wag-day-label{font-size:.78rem;font-weight:600;flex:1}
+.wag-today-tag{font-size:.6rem;background:var(--terra);color:white;padding:2px 7px;border-radius:10px}
+.wag-day-preview{font-size:.7rem;color:var(--ink3);max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:4px}
+.wag-arrow{font-size:.68rem;color:var(--ink3);transition:transform .22s}
+.wag-arrow.open{transform:rotate(180deg)}
+.wag-day-body{display:none;border-top:1px solid var(--border);padding:12px 13px}
+.wag-day-body.open{display:block}
+.wag-field{margin-bottom:9px}
+.wag-field:last-child{margin-bottom:0}
+.wag-field-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600;margin-bottom:3px}
+.wag-input{width:100%;font-size:.82rem;font-family:'Outfit',sans-serif;color:var(--ink);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 10px;outline:none;resize:none;line-height:1.5}
+.wag-input:focus{border-color:var(--sage);background:var(--surface)}
+
+/* ── ENERGY ── */
+.e-bar{display:flex;gap:6px;margin-bottom:11px}
+.e-btn{flex:1;padding:8px 4px;border-radius:10px;border:2px solid var(--border);background:var(--surface);font-family:'Outfit',sans-serif;font-size:.74rem;font-weight:500;cursor:pointer;transition:all .2s;text-align:center;line-height:1.3}
+.mode-note{border-radius:11px;padding:11px 14px;margin-bottom:11px;display:none;font-size:.79rem;line-height:1.55}
+.mode-note.show{display:block}
+.mode-note.low{background:var(--gold-ll);border:1px solid var(--gold-l);color:var(--ink2)}
+.mode-note.rest{background:var(--lav-ll);border:1px solid var(--lav-l);color:var(--ink2);text-align:center}
+
+/* ── TASK GROUPS ── */
+.task-group{background:var(--surface);border-radius:12px;border:1px solid var(--border);margin-bottom:7px;overflow:hidden}
+.task-header{display:flex;align-items:center;gap:9px;padding:11px 13px;cursor:pointer;user-select:none;transition:background .15s}
+.task-header:hover{background:var(--sage-ll)}
+.tg-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;transition:all .2s}
+.tg-check.done{background:var(--sage);border-color:var(--sage);color:white}
+.tg-check.partial{background:var(--gold);border-color:var(--gold);color:white}
+.tg-label{font-size:.86rem;flex:1;font-weight:500}
+.tg-prog{font-size:.67rem;color:var(--ink3);margin-right:2px}
+.tg-tog{font-size:.67rem;color:var(--ink3);transition:transform .2s}
+.tg-tog.open{transform:rotate(90deg)}
+.subtasks{display:none;border-top:1px solid var(--border);background:rgba(107,143,113,.03)}
+.subtasks.open{display:block}
+.subtask{display:flex;align-items:center;gap:9px;padding:9px 13px 9px 22px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.04);transition:background .12s}
+.subtask:last-child{border-bottom:none}
+.subtask:hover{background:var(--sage-ll)}
+.subtask.done{opacity:.48}
+.subtask.done .st-lbl{text-decoration:line-through;color:var(--ink3)}
+.st-chk{width:15px;height:15px;border-radius:4px;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.58rem;transition:all .15s}
+.subtask.done .st-chk{background:var(--sage);border-color:var(--sage);color:white}
+.st-lbl{font-size:.81rem}
+.badge{font-size:.6rem;padding:2px 7px;border-radius:7px;flex-shrink:0}
+.b-d{background:var(--terra-ll);color:var(--terra)}
+
+/* ── TASK PROGRESS ── */
+.tp-bar{display:flex;align-items:center;gap:9px;margin-bottom:9px;padding:9px 12px;background:var(--surface);border-radius:11px;border:1px solid var(--border)}
+.tp-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.tp-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--sage-d));border-radius:3px;transition:width .4s ease}
+.tp-count{font-size:.69rem;color:var(--sage);font-weight:600;white-space:nowrap}
+.tp-dots{display:flex;gap:4px}
+.tp-dot{width:9px;height:9px;border-radius:50%;border:2px solid var(--sage-l);transition:all .3s}
+.tp-dot.done{background:var(--sage);border-color:var(--sage)}
+.tp-dot.partial{background:var(--gold);border-color:var(--gold)}
+
+/* ── PLAIN TASK ── */
+.task{display:flex;align-items:center;gap:9px;padding:10px 13px;background:var(--surface);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);cursor:pointer;transition:all .15s;user-select:none}
+.task:hover{border-color:var(--sage-l);background:var(--sage-ll)}
+.task.done{opacity:.44}
+.task.done .task-lbl{text-decoration:line-through;color:var(--ink3)}
+.tchk{width:19px;height:19px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s}
+.task.done .tchk{background:var(--sage);border-color:var(--sage);color:white}
+.task-lbl{font-size:.84rem;flex:1}
+
+/* ── DAILY RHYTHM ROWS ── */
+.dr-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:6px}
+.dr-l-am{background:#E8F4F0;color:#2A7A6A}
+.dr-l-en{background:#F0EBF8;color:#7A6AA0}
+.dr-l-lf{background:#FBF8E8;color:#9A8A30}
+.dr-l-cf{background:#E8F5EC;color:#3A8A5A}
+.dr-l-sc{background:#F5E8F5;color:#9A5A9A}
+.dr-l-wd{background:#F5EBE8;color:#8A4A3A}
+.dr-section{margin-bottom:11px}
+.dr-row{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--surface);border-radius:9px;border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all .15s;user-select:none}
+.dr-row:hover{border-color:var(--sage-l);background:var(--sage-ll)}
+.dr-row.done{opacity:.44}
+.dr-row.done .dr-text{text-decoration:line-through;color:var(--ink3)}
+.dr-chk{width:15px;height:15px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.53rem;transition:all .15s}
+.dr-row.done .dr-chk{background:var(--sage);border-color:var(--sage);color:white}
+.dr-text{font-size:.8rem}
+
+/* ── RHYTHM ITEMS ── */
+.rhythm-item{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:5px}
+.r-num{font-family:'Lora',serif;font-size:1rem;color:var(--sage-l);line-height:1.2;flex-shrink:0;min-width:14px}
+.r-text{font-size:.82rem;font-weight:500;line-height:1.3}
+.r-sub{font-size:.71rem;color:var(--ink3);margin-top:2px}
+
+/* ── HABIT TODAY ── */
+.habit-today-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;user-select:none;transition:all .15s}
+.habit-today-row:hover{border-color:var(--teal)}
+.habit-today-row.done{opacity:.48}
+.habit-today-row.done .htlbl{text-decoration:line-through;color:var(--ink3)}
+.ht-chk{width:19px;height:19px;border-radius:50%;border:2px solid #A8D4CC;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s}
+.habit-today-row.done .ht-chk{background:var(--teal);border-color:var(--teal);color:white}
+.htlbl{font-size:.83rem;flex:1}
+
+/* ── CLOSE MY DAY NUDGE ── */
+.close-nudge{background:var(--terra-ll);border:1px solid var(--terra-l);border-radius:11px;padding:12px 14px;margin-top:8px}
+.close-nudge-title{font-family:'Lora',serif;font-size:.9rem;font-style:italic;color:var(--terra);margin-bottom:4px}
+.close-nudge p{font-size:.78rem;color:var(--ink2);line-height:1.5}
+
+/* ── HH WEEKLY TASKS ── */
+.hh{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .15s;margin-bottom:6px}
+.hh:hover{border-color:var(--sage-l)}
+.hh.done{opacity:.4}
+.hh.done .hh-lbl{text-decoration:line-through;color:var(--ink3)}
+.hh-chk{width:19px;height:19px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s;margin-top:1px}
+.hh.done .hh-chk{background:var(--sage);border-color:var(--sage);color:white}
+.hh-lbl{font-size:.81rem;flex:1;line-height:1.3}
+.hh-sub{font-size:.66rem;color:var(--ink3);margin-top:2px}
+.prog-bg{background:var(--sage-l);border-radius:3px;height:4px;overflow:hidden;margin-bottom:8px}
+.prog-fill{height:100%;background:var(--sage);border-radius:3px;transition:width .5s}
+.done-ct{font-size:.66rem;color:var(--sage);font-weight:500;padding:2px 7px;background:var(--sage-ll);border-radius:7px}
+
+/* ── HABIT WEEK GRID ── */
+.habit-week-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:13px;margin-bottom:11px}
+.hw-header{display:flex;align-items:center;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.hw-name-col{flex:1;font-size:.59rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600}
+.hw-days{display:flex;gap:4px}
+.hw-day-lbl{width:22px;text-align:center;font-size:.57rem;color:var(--ink3)}
+.hw-streak-lbl{font-size:.59rem;color:var(--ink3);min-width:34px;text-align:right}
+.habit-week-row{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.04)}
+.habit-week-row:last-child{border-bottom:none}
+.hw-habit-name{flex:1;font-size:.79rem}
+.hw-dots{display:flex;gap:4px}
+.hw-dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:.58rem}
+.hw-dot:hover{border-color:var(--teal)}
+.hw-dot.on{background:var(--teal);border-color:var(--teal);color:white}
+.hw-streak{font-size:.65rem;color:var(--gold);font-weight:500;min-width:34px;text-align:right}
+
+/* ── REFLECT ── */
+.refl-block{border-radius:11px;padding:12px 14px;margin-bottom:9px}
+.refl-block.past{background:var(--terra-ll);border:1px solid rgba(184,106,74,.15)}
+.refl-block.next{background:var(--sage-ll);border:1px solid rgba(107,143,113,.15)}
+.refl-block.pri{background:var(--gold-ll);border:1px solid rgba(192,154,80,.15)}
+.refl-block.bl{background:var(--surface2);border:1px solid var(--border)}
+.rbt{font-size:.59rem;text-transform:uppercase;letter-spacing:.13em;font-weight:600;margin-bottom:7px}
+.rb-t{color:var(--terra)}.rb-s{color:var(--sage)}.rb-g{color:var(--gold)}.rb-i{color:var(--ink3)}
+.refl-q{margin-bottom:8px}.refl-q:last-child{margin-bottom:0}
+.refl-q label{display:block;font-size:.65rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);font-weight:600;margin-bottom:3px}
+.pri-row{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--surface);border-radius:9px;border:1px solid var(--border);margin-bottom:5px}
+.pri-status{font-size:.88rem;cursor:pointer;flex-shrink:0}
+.pri-area{font-size:.65rem;color:var(--ink3);white-space:nowrap}
+.backlog-item{padding:7px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:5px;font-size:.78rem;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.rtab{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:.72rem;cursor:pointer;font-family:'Outfit',sans-serif;margin-right:5px;margin-bottom:10px;transition:all .2s}
+.rtab.active{background:var(--terra);color:white;border-color:var(--terra)}
+
+/* ── REWARDS ── */
+.token-bank{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:15px;margin-bottom:11px}
+.tb-top{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.tb-jar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#D4AA60);display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 3px 12px rgba(192,154,80,.4);flex-shrink:0}
+.tb-num{font-family:'Lora',serif;font-size:2.2rem;font-weight:500;color:var(--gold);line-height:1}
+.tb-label{font-size:.72rem;color:var(--ink2);line-height:1.4}
+.tb-goal{font-size:.67rem;color:var(--gold);font-weight:500;margin-top:2px}
+.token-track{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.tok{width:23px;height:23px;border-radius:50%;border:2px solid var(--gold-l);background:transparent;transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:.62rem}
+.tok.filled{background:var(--gold);border-color:var(--gold);color:white}
+.tok.milestone{border-color:var(--terra);box-shadow:0 0 0 2px rgba(184,106,74,.2)}
+.tok.filled.milestone{background:var(--terra);border-color:var(--terra)}
+.streak-card{background:linear-gradient(135deg,var(--sage-ll),#D0E8D3);border:1px solid var(--sage-l);border-radius:var(--radius);padding:13px;margin-bottom:11px;display:flex;align-items:center;gap:11px}
+.streak-num{font-family:'Lora',serif;font-size:1.9rem;font-weight:500;color:var(--sage-d);line-height:1}
+.streak-label{font-size:.77rem;color:var(--sage-d);line-height:1.4;font-weight:500}
+.streak-sub{font-size:.69rem;color:var(--sage);margin-top:2px}
+.fun-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px}
+.fun-tile{padding:11px 9px;background:var(--surface);border-radius:10px;border:1px solid var(--border);text-align:center;font-size:.77rem;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .2s;line-height:1.35;user-select:none}
+.fun-tile:hover{border-color:var(--gold-l);background:var(--gold-ll)}
+.fun-tile.picked{background:var(--gold);color:white;border-color:var(--gold)}
+.reward-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.reward-tile{padding:11px 9px;background:var(--terra-ll);border-radius:10px;border:1px solid var(--terra-l);text-align:center;font-size:.77rem;font-weight:500;color:var(--terra);cursor:pointer;transition:all .2s;line-height:1.35;user-select:none}
+.reward-tile:hover{background:var(--terra);color:white}
+.reward-tile.redeemed{background:var(--terra);color:white;opacity:.65}
+.custom-reward-box{background:var(--surface);border-radius:var(--radius);border:1px dashed var(--terra-l);padding:13px;margin-bottom:11px}
+.history-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:5px;font-size:.79rem}
+.history-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.history-time{font-size:.64rem;color:var(--ink3);margin-left:auto;white-space:nowrap}
+
+/* ── RESOURCES ── */
+.decl{background:var(--terra-ll);border-left:3px solid var(--terra);border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin-bottom:12px}
+.decl-lbl{font-size:.59rem;text-transform:uppercase;letter-spacing:.14em;color:var(--terra);font-weight:600;margin-bottom:4px}
+.decl-text{font-family:'Lora',serif;font-size:.87rem;line-height:1.65;font-style:italic}
+.val-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.val-chip{padding:6px 13px;border-radius:20px;font-family:'Lora',serif;font-size:.83rem;font-style:italic;font-weight:500}
+.vc-sage{background:var(--sage);color:white}.vc-terra{background:var(--terra);color:white}.vc-sky{background:var(--sky);color:white}.vc-gold{background:var(--gold);color:white}
+.mantra-pill{display:inline-block;padding:5px 12px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);font-family:'Lora',serif;font-size:.75rem;font-style:italic;color:var(--ink2);margin:3px 3px 3px 0}
+.sc-card{border-radius:var(--radius);padding:12px;color:white;margin-bottom:7px}
+.scc-spring{background:linear-gradient(135deg,var(--sage),var(--sage-d))}.scc-summer{background:linear-gradient(135deg,var(--terra),#D4855A)}.scc-fall{background:linear-gradient(135deg,#A07840,var(--gold))}.scc-winter{background:linear-gradient(135deg,var(--sky),#3A6F8F)}
+.sc-name{font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;opacity:.8;margin-bottom:2px}
+.sc-theme{font-family:'Lora',serif;font-size:.9rem;font-weight:400}
+.sc-notes{font-size:.71rem;opacity:.8;margin-top:4px;line-height:1.4}
+.gdrive-link{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--sky-ll);border:1px solid rgba(90,143,175,.25);border-radius:10px;margin-bottom:6px;text-decoration:none;color:var(--ink);font-size:.8rem;transition:all .2s}
+.gcal-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:.75rem;color:var(--ink2);cursor:pointer;transition:all .2s;text-decoration:none;font-family:'Outfit',sans-serif}
+.gcal-btn:hover{background:var(--sky-ll);border-color:var(--sky);color:var(--sky)}
+.log-item{display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:5px;font-size:.79rem}
+.log-time{font-size:.63rem;color:var(--ink3);min-width:38px;margin-top:1px}
+.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ld-sage{background:var(--sage)}.ld-terra{background:var(--terra)}.ld-gold{background:var(--gold)}.ld-lav{background:var(--lav)}.ld-sky{background:var(--sky)}.ld-teal{background:var(--teal)}
+.tag{display:inline-block;padding:3px 8px;border-radius:7px;font-size:.64rem;margin:2px 2px 0 0}
+.t-s{background:var(--sage-ll);color:var(--sage)}.t-t{background:var(--terra-ll);color:var(--terra)}.t-g{background:var(--gold-ll);color:var(--gold)}
+.area-card{background:var(--surface);border-radius:var(--radius);padding:12px;border:1px solid var(--border);margin-bottom:7px}
+.area-icon{font-size:1.1rem;margin-bottom:4px}
+.area-name{font-family:'Lora',serif;font-size:.88rem;font-weight:500;margin-bottom:2px}
+.area-desc{font-size:.74rem;color:var(--ink2);line-height:1.5}
+.res-section{margin-bottom:4px}
+.res-header{display:flex;align-items:center;gap:9px;padding:13px 14px;cursor:pointer;user-select:none;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);transition:background .15s}
+.res-header:hover{background:var(--surface2)}
+.res-title{font-size:.86rem;font-weight:500;flex:1}
+.res-arrow{font-size:.7rem;color:var(--ink3);transition:transform .22s}
+.res-arrow.open{transform:rotate(180deg)}
+.res-body{display:none;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:13px 14px;margin-bottom:10px}
+.res-body.open{display:block}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(42,37,32,0.55);z-index:500;display:none;align-items:flex-end;justify-content:center;padding:0}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:22px 22px 0 0;padding:22px 18px 34px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;animation:slideUp .28s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--surface3);border-radius:2px;margin:0 auto 18px}
+.modal-title{font-family:'Lora',serif;font-size:1.25rem;font-weight:500;margin-bottom:4px}
+.modal-sub{font-size:.79rem;color:var(--ink3);margin-bottom:16px}
+.summary-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:8px;margin-bottom:5px;font-size:.82rem}
+.summary-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);flex-shrink:0}
+.token-assess{display:flex;align-items:center;gap:12px;padding:13px;background:var(--gold-ll);border-radius:12px;border:1px solid var(--gold-l);margin:12px 0}
+.token-assess-num{font-family:'Lora',serif;font-size:2rem;font-weight:500;color:var(--gold);min-width:40px;text-align:center}
+.token-assess-btns{display:flex;flex-direction:column;gap:5px}
+.ta-btn{width:32px;height:32px;border-radius:50%;border:none;font-size:1rem;cursor:pointer;font-weight:600;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ta-plus{background:var(--gold);color:white}
+.ta-minus{background:var(--surface3);color:var(--ink2)}
+.ta-label{font-size:.76rem;color:var(--ink2);line-height:1.5;flex:1}
+.oneday-btn{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--lav-ll);border:1px solid var(--lav-l);border-radius:12px;margin-top:10px;text-decoration:none;cursor:pointer}
+.oneday-icon{font-size:1.5rem}
+.oneday-title{font-size:.85rem;font-weight:500;color:var(--lav)}
+.oneday-sub{font-size:.73rem;color:var(--ink3);margin-top:1px}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sage-l);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="brand"><div class="brand-dot"></div>my life os</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('today',this)">Today</button>
+    <button class="ntab" onclick="showPage('week',this)">Week</button>
+    <button class="ntab" onclick="showPage('reflect',this)">Reflect</button>
+    <button class="ntab" onclick="showPage('rewards',this)">Rewards</button>
+    <button class="ntab" onclick="showPage('resources',this)">Resources</button>
+  </div>
+  <button class="mode-badge weekday" id="mode-toggle" onclick="toggleMode()">Weekday</button>
+</nav>
+
+<div class="scroll-area" id="scroll-area">
+
+<!-- ══════════ TODAY ══════════ -->
+<div id="page-today" class="page active">
+
+  <div class="hero h-sage" id="today-hero">
+    <div class="hero-ey" id="today-date-lbl">Loading...</div>
+    <div class="hero-title" id="today-greeting">Good morning.</div>
+    <div class="hero-sub">One thing at a time. Small steps count.</div>
+  </div>
+  <div class="hero h-weekend" id="weekend-hero" style="display:none">
+    <div class="hero-ey">Weekend · Sabbath Mode</div>
+    <div class="hero-title">Rest is productive.</div>
+    <div class="hero-sub">Bare minimums. Be present with your people.</div>
+  </div>
+
+  <!-- WEEK AT A GLANCE -->
+  <p class="sec">Week at a glance</p>
+  <div id="wag-container"><!-- populated by JS --></div>
+
+  <!-- ENERGY -->
+  <p class="sec">How are you today?</p>
+  <div class="e-bar">
+    <button class="e-btn" id="e-full" onclick="setEnergy('full')">⚡ Full</button>
+    <button class="e-btn" id="e-low" onclick="setEnergy('low')">🌿 Low energy</button>
+    <button class="e-btn" id="e-rest" onclick="setEnergy('rest')">💛 Rest day</button>
+  </div>
+  <div class="mode-note rest" id="rest-card">
+    <div style="font-size:1.2rem;margin-bottom:5px">💛</div>
+    <div style="font-family:'Lora',serif;font-size:.93rem;font-style:italic;color:var(--lav);margin-bottom:4px">Today is a rest day, and that's okay.</div>
+    Walk if you can. Feed everyone. That's enough.
+  </div>
+  <div class="mode-note low" id="low-note">
+    <strong style="color:var(--gold)">Low energy mode.</strong> Only your bare minimums today. Everything else will still be here tomorrow.
+  </div>
+
+  <!-- CAPTURE -->
+  <p class="sec">Quick capture</p>
+  <textarea class="note" id="capture-text" rows="3" placeholder="What's on your mind? Dump it here..." style="margin-bottom:12px"></textarea>
+
+  <!-- DAILY TASKS -->
+  <p class="sec">Daily tasks</p>
+  <div class="tp-bar">
+    <div class="tp-track"><div class="tp-fill" id="tp-fill" style="width:0%"></div></div>
+    <span class="tp-count" id="tp-count">0 / 4</span>
+    <div class="tp-dots">
+      <div class="tp-dot" id="tpd-0" title="Laundry"></div>
+      <div class="tp-dot" id="tpd-1" title="Dishes"></div>
+      <div class="tp-dot" id="tpd-2" title="Counters"></div>
+      <div class="tp-dot" id="tpd-3" title="Dinner"></div>
+    </div>
+  </div>
+
+  <div class="task-group" id="tg-laundry">
+    <div class="task-header" onclick="toggleGroupMaster('laundry')">
+      <div class="tg-check" id="tgc-laundry"></div><span class="tg-label">🧺 Laundry cycle</span>
+      <span class="tg-prog" id="tgp-laundry">0/3</span><span class="tg-tog" id="tgt-laundry">▶</span><span class="badge b-d">Daily</span>
+    </div>
+    <div class="subtasks" id="sts-laundry">
+      <div class="subtask" onclick="toggleSub(this,'laundry',0)"><div class="st-chk"></div><span class="st-lbl">Sort dry laundry from last load</span></div>
+      <div class="subtask" onclick="toggleSub(this,'laundry',1)"><div class="st-chk"></div><span class="st-lbl">Start a new load in the washer</span></div>
+      <div class="subtask" onclick="toggleSub(this,'laundry',2)"><div class="st-chk"></div><span class="st-lbl">Move washer load to dryer</span></div>
+    </div>
+  </div>
+
+  <div class="task-group" id="tg-dishes">
+    <div class="task-header" onclick="toggleGroupMaster('dishes')">
+      <div class="tg-check" id="tgc-dishes"></div><span class="tg-label">🍽 Dishes cycle</span>
+      <span class="tg-prog" id="tgp-dishes">0/2</span><span class="tg-tog" id="tgt-dishes">▶</span><span class="badge b-d">Daily</span>
+    </div>
+    <div class="subtasks" id="sts-dishes">
+      <div class="subtask" onclick="toggleSub(this,'dishes',0)"><div class="st-chk"></div><span class="st-lbl">Unload clean dishwasher</span></div>
+      <div class="subtask" onclick="toggleSub(this,'dishes',1)"><div class="st-chk"></div><span class="st-lbl">Load dirty dishes (at least once)</span></div>
+    </div>
+  </div>
+
+  <div class="task-group" id="tg-counters">
+    <div class="task-header" onclick="toggleGroupMaster('counters')">
+      <div class="tg-check" id="tgc-counters"></div><span class="tg-label">✨ Wipe counters</span>
+      <span class="tg-prog" id="tgp-counters">0/3</span><span class="tg-tog" id="tgt-counters">▶</span><span class="badge b-d">Daily</span>
+    </div>
+    <div class="subtasks" id="sts-counters">
+      <div class="subtask" onclick="toggleSub(this,'counters',0)"><div class="st-chk"></div><span class="st-lbl">Clear counters & table</span></div>
+      <div class="subtask" onclick="toggleSub(this,'counters',1)"><div class="st-chk"></div><span class="st-lbl">Toss loose items into chuck-it buckets</span></div>
+      <div class="subtask" onclick="toggleSub(this,'counters',2)"><div class="st-chk"></div><span class="st-lbl">Wipe down surfaces</span></div>
+    </div>
+  </div>
+
+  <div class="task-group" id="tg-dinner">
+    <div class="task-header" onclick="toggleGroupMaster('dinner')">
+      <div class="tg-check" id="tgc-dinner"></div><span class="tg-label">🍳 Decide dinner by noon</span>
+      <span class="tg-prog" id="tgp-dinner">0/2</span><span class="tg-tog" id="tgt-dinner">▶</span><span class="badge b-d">Daily</span>
+    </div>
+    <div class="subtasks" id="sts-dinner">
+      <div class="subtask" onclick="toggleSub(this,'dinner',0)"><div class="st-chk"></div><span class="st-lbl">Check meal plan → confirm or swap</span></div>
+      <div class="subtask" onclick="toggleSub(this,'dinner',1)"><div class="st-chk"></div><span class="st-lbl">Note what to thaw / prep</span></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DAILY RHYTHM DROPDOWN -->
+  <div class="drop-section" id="drop-dr">
+    <div class="drop-header" onclick="toggleDrop('drop-dr')">
+      <span class="drop-icon">☀️</span>
+      <span class="drop-title">Daily rhythm</span>
+      <span class="drop-meta" id="dr-meta">0 done</span>
+      <span class="drop-arrow" id="drop-dr-arrow">▾</span>
+    </div>
+    <div class="drop-body" id="drop-dr-body">
+      <div class="dr-section">
+        <div class="dr-label dr-l-am">AM Routine</div>
+        <div class="dr-row" onclick="toggleDR(this,'am1')"><div class="dr-chk"></div><span class="dr-text">Up at 6:30 AM</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'am2')"><div class="dr-chk"></div><span class="dr-text">Bible recap / devotional (YouVersion)</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'am3')"><div class="dr-chk"></div><span class="dr-text">Make breakfast + pack / prep lunch</span></div>
+      </div>
+      <div class="dr-section">
+        <div class="dr-label dr-l-en">Energizing</div>
+        <div class="dr-row" onclick="toggleDR(this,'en1')"><div class="dr-chk"></div><span class="dr-text">Read a physical book / magazine for 10 min</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'en2')"><div class="dr-chk"></div><span class="dr-text">Complete a journal prompt w/ 10 min timer</span></div>
+      </div>
+      <div class="dr-section">
+        <div class="dr-label dr-l-lf">Light + Fun</div>
+        <div class="dr-row" onclick="toggleDR(this,'lf1')"><div class="dr-chk"></div><span class="dr-text">Enjoy an afternoon coffee or fun drink</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'lf2')"><div class="dr-chk"></div><span class="dr-text">Listen to music</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'lf3')"><div class="dr-chk"></div><span class="dr-text">Pinterest scroll with a timer</span></div>
+      </div>
+      <div class="dr-section">
+        <div class="dr-label dr-l-cf">Care for Them</div>
+        <div class="dr-row" onclick="toggleDR(this,'cf1')"><div class="dr-chk"></div><span class="dr-text">Play with each child 1:1 — phone free</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'cf2')"><div class="dr-chk"></div><span class="dr-text">Intentional daily movement with kids</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'cf3')"><div class="dr-chk"></div><span class="dr-text">Daily reading (bedtime or otherwise)</span></div>
+      </div>
+      <div class="dr-section">
+        <div class="dr-label dr-l-sc">Self Care</div>
+        <div class="dr-row" onclick="toggleDR(this,'sc1')"><div class="dr-chk"></div><span class="dr-text">Shower + hair / makeup / get ready</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'sc2')"><div class="dr-chk"></div><span class="dr-text">Daily movement / walk</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'sc3')"><div class="dr-chk"></div><span class="dr-text">Water intake</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'sc4')"><div class="dr-chk"></div><span class="dr-text">Less phone today</span></div>
+      </div>
+      <div class="dr-section" style="margin-bottom:0">
+        <div class="dr-label dr-l-wd">Wind Down</div>
+        <div class="dr-row" onclick="toggleDR(this,'wd1')"><div class="dr-chk"></div><span class="dr-text">Phone plugged in + bricked at 9pm</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'wd2')"><div class="dr-chk"></div><span class="dr-text">Skincare + teeth</span></div>
+        <div class="dr-row" onclick="toggleDR(this,'wd3')"><div class="dr-chk"></div><span class="dr-text">Prayer time</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABITS -->
+  <p class="sec">Habits — today</p>
+  <div id="habit-today-list">
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'walk')"><div class="ht-chk"></div><span class="htlbl">🚶 Walking / movement</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'read')"><div class="ht-chk"></div><span class="htlbl">📖 Reading</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'journal')"><div class="ht-chk"></div><span class="htlbl">✍️ Journaling</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'phone')"><div class="ht-chk"></div><span class="htlbl">📵 Phone bricked by 9pm</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'water')"><div class="ht-chk"></div><span class="htlbl">💧 Water intake</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'prayer')"><div class="ht-chk"></div><span class="htlbl">🙏 Prayer / devotional</span></div>
+    <div class="habit-today-row" onclick="toggleHabitToday(this,'kids')"><div class="ht-chk"></div><span class="htlbl">👶 1:1 time with each kid</span></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPENING RHYTHM DROPDOWN -->
+  <div class="drop-section" id="drop-or">
+    <div class="drop-header" onclick="toggleDrop('drop-or')">
+      <span class="drop-icon">🌅</span>
+      <span class="drop-title">Opening rhythm</span>
+      <span class="drop-meta" style="font-size:.68rem;color:var(--ink3)">A gentle order</span>
+      <span class="drop-arrow" id="drop-or-arrow">▾</span>
+    </div>
+    <div class="drop-body" id="drop-or-body">
+      <p style="font-size:.71rem;color:var(--ink3);margin-bottom:9px;font-style:italic">Not a checklist — just the flow.</p>
+      <div class="rhythm-item"><span class="r-num">1</span><div><div class="r-text">Get yourself ready first</div><div class="r-sub">Coffee, dressed, a moment before the house wakes</div></div></div>
+      <div class="rhythm-item"><span class="r-num">2</span><div><div class="r-text">Kids up & morning needs met</div><div class="r-sub">Breakfast, dressed, bags packed</div></div></div>
+      <div class="rhythm-item"><span class="r-num">3</span><div><div class="r-text">Quick kitchen pass</div><div class="r-sub">Dishwasher unload, wipe counters if time</div></div></div>
+      <div class="rhythm-item"><span class="r-num">4</span><div><div class="r-text">Check today's plan</div><div class="r-sub">Open Life OS — what needs doing?</div></div></div>
+    </div>
+  </div>
+
+  <!-- CLOSING RHYTHM DROPDOWN -->
+  <div class="drop-section" id="drop-cr">
+    <div class="drop-header" onclick="toggleDrop('drop-cr')">
+      <span class="drop-icon">🌙</span>
+      <span class="drop-title">Closing rhythm</span>
+      <span class="drop-meta" style="font-size:.68rem;color:var(--ink3)">End with intention</span>
+      <span class="drop-arrow" id="drop-cr-arrow">▾</span>
+    </div>
+    <div class="drop-body" id="drop-cr-body">
+      <p style="font-size:.71rem;color:var(--ink3);margin-bottom:9px;font-style:italic">Leave tomorrow ready.</p>
+      <div class="rhythm-item"><span class="r-num">1</span><div><div class="r-text">Kitchen reset</div><div class="r-sub">Load dishwasher, run it, wipe counters</div></div></div>
+      <div class="rhythm-item"><span class="r-num">2</span><div><div class="r-text">Quick tidy pass</div><div class="r-sub">Chuck-it buckets, couch, anything out of place</div></div></div>
+      <div class="rhythm-item"><span class="r-num">3</span><div><div class="r-text">Kids to bed</div><div class="r-sub">Books, connection, consistent wind-down</div></div></div>
+      <div class="rhythm-item"><span class="r-num">4</span><div><div class="r-text">Phone bricked at 9pm → your time</div><div class="r-sub">Skincare, reading, prayer — protect this</div></div></div>
+      <div class="close-nudge" style="margin-top:10px">
+        <div class="close-nudge-title">Before you brick your phone...</div>
+        <p>Assess your day. How many tokens did you earn? Tap <strong>Close My Day</strong> below to reflect, log, and journal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSE MY DAY BUTTON -->
+  <button onclick="openCloseMyDay()" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,var(--terra),#9A5030);color:white;border:none;border-radius:14px;font-family:'Lora',serif;font-size:1rem;font-style:italic;cursor:pointer;box-shadow:0 3px 12px rgba(184,106,74,.3)">
+    ✦ Close my day
+  </button>
+
+</div><!-- /today -->
+
+
+<!-- ══════════ WEEK ══════════ -->
+<div id="page-week" class="page">
+  <div class="hero h-terra">
+    <div class="hero-ey" id="week-lbl">Week of March 17 – 23</div>
+    <div class="hero-title">This week.</div>
+    <div class="hero-sub">See everything undone. Grab something. Reset every Monday.</div>
+  </div>
+
+  <div class="flex-c" style="margin-bottom:7px">
+    <p class="sec" style="margin:0">Weekly tasks</p>
+    <div class="done-ct ml-auto" id="week-done-ct">0 / 15 done</div>
+    <button class="btn btn-ghost btn-sm" onclick="resetWeek()" style="margin-left:7px">↺ Reset</button>
+  </div>
+  <div style="font-size:.7rem;color:var(--ink2);margin-bottom:8px;padding:7px 11px;background:var(--gold-ll);border-radius:8px;border:1px solid var(--gold-l)">
+    ⏱ <strong style="color:var(--gold)">Rule:</strong> If it takes more than 10–20 min, it's a project — not a weekly task.
+  </div>
+  <div class="prog-bg"><div class="prog-fill" id="week-pf" style="width:0%"></div></div>
+  <div id="weekly-tasks">
+    <div class="hh" onclick="toggleHH(this,'Wipe fridge')"><div class="hh-chk"></div><div><div class="hh-lbl">Wipe fridge</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Wipe microwave')"><div class="hh-chk"></div><div><div class="hh-lbl">Wipe microwave</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Swiffer floors')"><div class="hh-chk"></div><div><div class="hh-lbl">Swiffer floors</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Inventory')"><div class="hh-chk"></div><div><div class="hh-lbl">Inventory</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Meal plan')"><div class="hh-chk"></div><div><div class="hh-lbl">Meal plan</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Grocery shop/order')"><div class="hh-chk"></div><div><div class="hh-lbl">Grocery shop / order</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Put away laundry 1')"><div class="hh-chk"></div><div><div class="hh-lbl">Put away laundry 1</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Put away laundry 2')"><div class="hh-chk"></div><div><div class="hh-lbl">Put away laundry 2</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Bathroom 1')"><div class="hh-chk"></div><div><div class="hh-lbl">Bathroom 1</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Bathroom 2')"><div class="hh-chk"></div><div><div class="hh-lbl">Bathroom 2</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Declutter')"><div class="hh-chk"></div><div><div class="hh-lbl">Declutter</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Chuck-it buckets')"><div class="hh-chk"></div><div><div class="hh-lbl">Empty chuck-it buckets</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Toy reset')"><div class="hh-chk"></div><div><div class="hh-lbl">Toy reset</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Paper review')"><div class="hh-chk"></div><div><div class="hh-lbl">Paper review</div><div class="hh-sub">Mail, paperwork from the week</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Wash bedding')"><div class="hh-chk"></div><div><div class="hh-lbl">Wash bedding (alternate rooms)</div></div></div>
+  </div>
+
+  <div class="divider"></div>
+  <p class="sec">📋 Mom admin block</p>
+  <p style="font-size:.7rem;color:var(--ink3);margin-bottom:8px">Phone calls, appointments, money. Pure admin.</p>
+  <div class="hh" onclick="toggleHH(this,'YNAB check-in')"><div class="hh-chk"></div><div><div class="hh-lbl">YNAB / budgeting check-in</div></div></div>
+  <div class="hh" onclick="toggleHH(this,'Pay bills')"><div class="hh-chk"></div><div><div class="hh-lbl">Pay bills / review charges</div></div></div>
+  <div class="hh" onclick="toggleHH(this,'Schedule appts')"><div class="hh-chk"></div><div><div class="hh-lbl">Schedule appointments / calls</div></div></div>
+  <div class="hh" onclick="toggleHH(this,'Insurance/paperwork')"><div class="hh-chk"></div><div><div class="hh-lbl">Insurance / paperwork</div></div></div>
+  <div class="hh" onclick="toggleHH(this,'Kids admin')"><div class="hh-chk"></div><div><div class="hh-lbl">Kids admin</div><div class="hh-sub">School forms, health, registrations</div></div></div>
+  <div class="hh" onclick="toggleHH(this,'Emails/follow-ups')"><div class="hh-chk"></div><div><div class="hh-lbl">Emails / follow-ups</div></div></div>
+
+  <div class="divider"></div>
+  <p class="sec">✦ Plan your life block</p>
+  <div style="background:var(--lav-ll);border:1px solid var(--lav-l);border-radius:11px;padding:12px 14px;font-size:.79rem;color:var(--ink2);line-height:1.8;margin-bottom:10px">
+    <span style="color:var(--lav)">①</span> Complete past week's reflection<br>
+    <span style="color:var(--lav)">②</span> Set next week's three priorities<br>
+    <span style="color:var(--lav)">③</span> Note what needs a date now<br>
+    <span style="color:var(--lav)">④</span> Review backlog<br>
+    <span style="color:var(--lav)">⑤</span> Check in on monthly goals in Google Tasks
+  </div>
+  <button class="btn btn-ghost btn-sm" style="width:100%;margin-bottom:14px" onclick="showPage('reflect',document.querySelectorAll('.ntab')[2])">→ Open Reflect tab</button>
+
+  <div class="divider"></div>
+  <p class="sec">Habits — this week</p>
+  <div class="habit-week-card">
+    <div class="hw-header">
+      <div class="hw-name-col">Habit</div>
+      <div class="hw-days"><div class="hw-day-lbl">M</div><div class="hw-day-lbl">T</div><div class="hw-day-lbl">W</div><div class="hw-day-lbl">T</div><div class="hw-day-lbl">F</div><div class="hw-day-lbl">S</div><div class="hw-day-lbl">S</div></div>
+      <div class="hw-streak-lbl">Streak</div>
+    </div>
+    <div id="habit-week-rows"></div>
+  </div>
+  <button class="btn btn-ghost btn-sm" onclick="resetHabits()">↺ Reset habits week</button>
+</div>
+
+
+<!-- ══════════ REFLECT ══════════ -->
+<div id="page-reflect" class="page">
+  <div class="hero h-rose">
+    <div class="hero-ey">Plan Your Life · Weekly Reflection</div>
+    <div class="hero-title">Look back. Plan forward.</div>
+    <div class="hero-sub">Sunday evening or Monday morning.</div>
+  </div>
+  <div style="background:var(--lav-ll);border:1px solid var(--lav-l);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:.78rem;color:var(--ink2);line-height:1.7">
+    <span style="color:var(--lav)">①</span> Reflect &nbsp;<span style="color:var(--lav)">②</span> Set priorities &nbsp;<span style="color:var(--lav)">③</span> What needs a date &nbsp;<span style="color:var(--lav)">④</span> Review backlog
+  </div>
+  <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="rtab active" onclick="showReflTab('current',this)">This week</button>
+    <button class="rtab" onclick="showReflTab('archive',this)">Archive</button>
+  </div>
+  <div id="refl-current">
+    <p class="sec">This past week</p>
+    <div class="refl-block past">
+      <div class="rbt rb-t">What happened</div>
+      <div class="refl-q"><label>What went well?</label><textarea class="note" id="r-well" rows="2" placeholder="Even small wins count..."></textarea></div>
+      <div class="refl-q"><label>Where did I show up?</label><textarea class="note" id="r-show" rows="2" placeholder="Present, intentional, consistent?"></textarea></div>
+      <div class="refl-q"><label>What felt life-giving?</label><textarea class="note" id="r-life" rows="2" placeholder="What gave you energy?"></textarea></div>
+      <div class="refl-q" style="margin-bottom:0"><label>What drained me?</label><textarea class="note" id="r-drain" rows="2" placeholder="What cost you the most?"></textarea></div>
+    </div>
+    <div class="refl-block pri">
+      <div class="rbt rb-g">Last week's priorities</div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="lp-rel" placeholder="Relationship priority..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Relationship</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="lp-fam" placeholder="Family / outside..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Family</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="lp-hlth" placeholder="Health / home..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Health/Home</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="lp-work" placeholder="Working on (habit)..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area" style="color:var(--lav)">Working on</span></div>
+      <div class="pri-row" style="border-style:dashed"><span class="pri-status">⭐</span><div style="flex:1"><input class="inp" id="lp-xtra" placeholder="Extra credit..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Bonus</span></div>
+    </div>
+    <div class="refl-block bl">
+      <div class="rbt rb-i">⏱ Backlog</div>
+      <div id="backlog-list">
+        <div class="backlog-item"><span>⏱</span><span style="flex:1">Sleeping arrangements — revisit after taxes</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button></div>
+        <div class="backlog-item"><span>⏱</span><span style="flex:1">BRICK schedule review</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button></div>
+      </div>
+      <div class="row" style="margin-top:7px"><input class="inp" id="backlog-input" placeholder="Add to backlog..." style="flex:1" onkeydown="if(event.key==='Enter')addBacklog()"/><button class="btn btn-ghost btn-sm" onclick="addBacklog()">Add</button></div>
+    </div>
+    <p class="sec mt">This next week</p>
+    <div class="refl-block next">
+      <div class="rbt rb-s">Looking ahead</div>
+      <div class="refl-q"><label>What events or milestones are coming up?</label><textarea class="note" id="r-events" rows="2" placeholder="Appointments, birthdays, school..."></textarea></div>
+      <div class="refl-q"><label>What needs a date now?</label><textarea class="note" id="r-date" rows="2" placeholder="What needs to get on the calendar?"></textarea></div>
+      <div class="refl-q" style="margin-bottom:0"><label>Seasonal or family activities?</label><textarea class="note" id="r-season" rows="2" placeholder="Connection, traditions, outside time..."></textarea></div>
+    </div>
+    <div class="refl-block pri">
+      <div class="rbt rb-g">Next week's three priorities</div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="np-rel" placeholder="1 relationship priority..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Relationship</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="np-fam" placeholder="1 family / outside..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Family</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="np-hlth" placeholder="1 health / home..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Health/Home</span></div>
+      <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" id="np-work" placeholder="Working on..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area" style="color:var(--lav)">Working on</span></div>
+      <div class="pri-row" style="border-style:dashed"><span class="pri-status">⭐</span><div style="flex:1"><input class="inp" id="np-xtra" placeholder="Extra credit..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Bonus</span></div>
+    </div>
+    <div class="card"><div style="font-family:'Lora',serif;font-size:.88rem;font-weight:500;margin-bottom:6px">📝 Notes & intentions</div><textarea class="note" id="r-notes" rows="4" placeholder="Anything on your heart as you plan the week ahead..."></textarea></div>
+    <button class="btn btn-sage" style="width:100%;margin-bottom:7px" onclick="saveReflection()">✓ Save this reflection</button>
+    <button class="btn btn-ghost btn-sm" style="width:100%" onclick="logToGCal()">📅 Log week to Google Calendar</button>
+  </div>
+  <div id="refl-archive" style="display:none">
+    <p style="font-size:.78rem;color:var(--ink3);margin-bottom:11px;font-style:italic">Your saved reflections. Scroll to see how far you've come.</p>
+    <div id="archive-list"><div style="text-align:center;padding:26px;color:var(--ink3);font-size:.81rem;font-style:italic">No saved reflections yet.</div></div>
+  </div>
+</div>
+
+
+<!-- ══════════ REWARDS ══════════ -->
+<div id="page-rewards" class="page">
+  <div class="hero h-gold">
+    <div class="hero-ey">Rewards & Momentum</div>
+    <div class="hero-title">You earned this.</div>
+    <div class="hero-sub">Make the boring fun. Celebrate showing up.</div>
+  </div>
+
+  <p class="sec">Current streak</p>
+  <div class="streak-card">
+    <div>
+      <div class="streak-num" id="streak-days">0</div>
+      <div style="font-size:.59rem;text-transform:uppercase;letter-spacing:.1em;color:var(--sage);margin-top:1px">days</div>
+    </div>
+    <div style="flex:1">
+      <div class="streak-label">Day streak</div>
+      <div class="streak-sub" id="streak-sub">Complete today's tasks to start your streak!</div>
+    </div>
+    <div style="font-size:1.7rem">🔥</div>
+  </div>
+
+  <p class="sec">Token bank</p>
+  <div class="token-bank">
+    <div class="tb-top">
+      <div class="tb-jar">🪙</div>
+      <div>
+        <div class="tb-num" id="tb-token-count">0</div>
+        <div class="tb-label">tokens earned</div>
+        <div class="tb-goal" id="tb-goal-label">Earn tokens by pushing through hard things</div>
+      </div>
+    </div>
+    <div class="token-track" id="token-track"></div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="spendToken()">🎁 Spend a token</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportWeeklyLog()">📥 Export week log</button>
+    </div>
+  </div>
+
+  <p class="sec">Reward history</p>
+  <div id="reward-history"><div style="text-align:center;padding:18px;color:var(--ink3);font-size:.81rem;font-style:italic">Redeem your first reward to start your history!</div></div>
+
+  <p class="sec">Make the boring fun</p>
+  <div class="fun-grid">
+    <div class="fun-tile" onclick="pickFun(this)">🎙 Listen to a podcast</div>
+    <div class="fun-tile" onclick="pickFun(this)">🎵 Put on a playlist</div>
+    <div class="fun-tile" onclick="pickFun(this)">📸 Before + after photo</div>
+    <div class="fun-tile" onclick="pickFun(this)">⏱ Gamify it: how fast?</div>
+    <div class="fun-tile" onclick="pickFun(this)">🎬 Time lapse video</div>
+    <div class="fun-tile" onclick="pickFun(this)">🖐 Opposite hand challenge</div>
+  </div>
+
+  <p class="sec">Favorite rewards</p>
+  <p style="font-size:.69rem;color:var(--ink3);margin-bottom:8px">Redeem after completing your daily rhythm. Costs 1 token.</p>
+  <div class="reward-grid">
+    <div class="reward-tile" onclick="redeemReward(this,'Reading for 10 min')">📖 Reading 10 min</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Chocolate treat')">🍫 Chocolate treat</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Color with kids')">🎨 Color with kids</div>
+    <div class="reward-tile" onclick="redeemReward(this,'YouTube 15 min')">▶️ YouTube 15 min</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Go for a walk')">🚶 Go for a walk</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Pinterest 10 min')">📌 Pinterest 10 min</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Crunchy snack')">🍿 Crunchy snack</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Random project 15 min')">🛠 Random project</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Afternoon coffee')">☕ Afternoon coffee</div>
+    <div class="reward-tile" onclick="redeemReward(this,'Long bath or shower')">🛁 Long bath</div>
+  </div>
+
+  <p class="sec">Custom reward</p>
+  <div class="custom-reward-box">
+    <p style="font-size:.72rem;color:var(--ink3);margin-bottom:8px">For bigger rewards — something to work toward.</p>
+    <input class="inp" id="custom-reward-input" placeholder="e.g. New book, massage, solo afternoon..." style="margin-bottom:8px"/>
+    <input class="inp" id="custom-reward-cost" placeholder="Token cost (e.g. 10)" style="margin-bottom:8px"/>
+    <button class="btn btn-terra btn-sm" onclick="addCustomReward()" style="width:100%">+ Add custom reward</button>
+    <div id="custom-reward-list" style="margin-top:9px"></div>
+  </div>
+</div>
+
+
+<!-- ══════════ RESOURCES ══════════ -->
+<div id="page-resources" class="page">
+  <div class="hero h-sky">
+    <div class="hero-ey">Resources, Year & Log</div>
+    <div class="hero-title">Your reference layer.</div>
+    <div class="hero-sub">Anchors, links, history, and identity.</div>
+  </div>
+
+  <!-- QUICK LINKS (collapsed) -->
+  <div class="res-section" style="margin-bottom:10px">
+    <div class="res-header" onclick="toggleRes('links-body','links-arrow')">
+      <span style="font-size:.95rem">🔗</span>
+      <span class="res-title">Quick links</span>
+      <span class="res-arrow" id="links-arrow">▾</span>
+    </div>
+    <div class="res-body" id="links-body">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px">
+        <a class="gcal-btn" href="https://calendar.google.com" target="_blank">📅 Google Calendar</a>
+        <a class="gcal-btn" href="https://tasks.google.com" target="_blank">✓ Google Tasks</a>
+        <a class="gcal-btn" href="https://drive.google.com" target="_blank">📁 Google Drive</a>
+        <a class="gcal-btn" href="https://dayone.me" target="_blank">📖 OneDay</a>
+        <a class="gcal-btn" href="https://www.youversion.com" target="_blank">🙏 YouVersion</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- YEAR & IDENTITY -->
+  <div class="res-section" style="margin-bottom:10px">
+    <div class="res-header" onclick="toggleRes('year-body','year-arrow')">
+      <span style="font-size:.95rem">✦</span>
+      <span class="res-title">Year & Identity</span>
+      <span class="res-arrow" id="year-arrow">▾</span>
+    </div>
+    <div class="res-body" id="year-body">
+      <p class="sec">Core values</p>
+      <div class="val-chips"><div class="val-chip vc-sage">Peace & Groundedness</div><div class="val-chip vc-terra">Trust & Connection</div><div class="val-chip vc-sky">Family First</div><div class="val-chip vc-gold">Small Consistent Steps</div></div>
+      <div class="decl"><div class="decl-lbl">Anchoring Statement</div><div class="decl-text">"I am a woman rooted in trust, fueled by growth, and anchored in peace. I nurture my family with love, pursue health with intention, and build certainty not from control, but from conviction."</div></div>
+      <div class="decl" style="background:var(--sage-ll);border-left-color:var(--sage)"><div class="decl-lbl" style="color:var(--sage)">Focus Declaration</div><div class="decl-text">"In my life right now, I value peace & groundedness, and trust & authentic connection. I want to focus on my family and move toward building family traditions. Small, consistent steps can result in big change."</div></div>
+      <div class="card">
+        <div style="font-family:'Lora',serif;font-size:.92rem;font-style:italic;line-height:1.7;margin-bottom:9px">In 2026, I'm focusing on planning life-giving connection, being active and outside with my kids, and tending to our family's health — because these are the foundations that support everything we build next.</div>
+        <div>
+          <span class="mantra-pill">Plan simply</span>
+          <span class="mantra-pill">Follow through consistently</span>
+          <span class="mantra-pill">Show up, even imperfectly</span>
+          <span class="mantra-pill">Small steps = big change</span>
+          <span class="mantra-pill">I am the CEO of this home</span>
+          <span class="mantra-pill">Rest is part of the work</span>
+        </div>
+      </div>
+      <p class="sec">Seasonal intentions</p>
+      <div class="sc-card scc-spring"><div class="sc-name">Spring</div><div class="sc-theme">Reset & Refresh</div><div class="sc-notes">Declutter, restart rhythms, open windows</div></div>
+      <div class="sc-card scc-summer"><div class="sc-name">Summer</div><div class="sc-theme">Outside & Adventures</div><div class="sc-notes">Bucket list, parks, library, movement with kids</div></div>
+      <div class="sc-card scc-fall"><div class="sc-name">Fall</div><div class="sc-theme">Routines & Learning</div><div class="sc-notes">Back to school rhythms, new habits, cozy structure</div></div>
+      <div class="sc-card scc-winter"><div class="sc-name">Winter</div><div class="sc-theme">Celebrations & Traditions</div><div class="sc-notes">Build traditions, celebrate, rest well</div></div>
+      <p class="sec mt" style="margin-top:11px">Areas of responsibility</p>
+      <div class="area-card"><div class="area-icon">🏠</div><div class="area-name">Home</div><div class="area-desc">Maintenance, rhythm, systems, declutter</div></div>
+      <div class="area-card"><div class="area-icon">👨‍👩‍👧</div><div class="area-name">Family</div><div class="area-desc">Kids, traditions, connection planning</div></div>
+      <div class="area-card"><div class="area-icon">💚</div><div class="area-name">Health</div><div class="area-desc">Movement, meals, margin, emotional wellbeing</div></div>
+      <div class="area-card"><div class="area-icon">💛</div><div class="area-name">Marriage</div><div class="area-desc">Connection, date nights, Speaking Life</div></div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY LOG (collapsed) -->
+  <div class="res-section" style="margin-bottom:10px">
+    <div class="res-header" onclick="toggleRes('log-body','log-arrow')">
+      <span style="font-size:.95rem">📋</span>
+      <span class="res-title">Activity log</span>
+      <span class="res-arrow" id="log-arrow">▾</span>
+    </div>
+    <div class="res-body" id="log-body">
+      <div class="flex-c" style="margin-bottom:9px">
+        <button class="btn btn-ghost btn-sm" onclick="clearLog()">Clear log</button>
+        <button class="btn btn-ghost btn-sm ml-auto" onclick="exportWeeklyLog()">📥 Export week</button>
+        <button class="btn btn-ghost btn-sm" onclick="logToGCal()" style="margin-left:6px">📅 Log to GCal</button>
+      </div>
+      <div id="activity-log"><div style="text-align:center;padding:22px;color:var(--ink3);font-size:.81rem;font-style:italic">Your actions appear here.</div></div>
+    </div>
+  </div>
+
+</div><!-- /resources -->
+
+</div><!-- /scroll-area -->
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="token-display" onclick="showPage('rewards',document.querySelectorAll('.ntab')[3])">
+    <div class="token-jar">🪙</div>
+    <div class="token-info">
+      <div class="token-count-label">Tokens</div>
+      <div class="token-num" id="bottom-token-num">0</div>
+    </div>
+    <div class="tmini-row" id="bottom-mini-dots">
+      <div class="tmini"></div><div class="tmini"></div><div class="tmini"></div><div class="tmini"></div><div class="tmini"></div>
+    </div>
+  </div>
+  <div class="bottom-btns">
+    <button class="close-day-btn" onclick="openCloseMyDay()">✦ Close day</button>
+    <button class="earn-btn" onclick="earnToken()">+ Token</button>
+  </div>
+</div>
+
+<!-- CLOSE MY DAY MODAL -->
+<div class="modal-overlay" id="cmd-modal" onclick="closeCMDIfOverlay(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✦ Close my day</div>
+    <div class="modal-sub" id="cmd-date">Today · Loading...</div>
+
+    <p class="sec">What you completed today</p>
+    <div id="cmd-summary"><!-- populated by JS --></div>
+
+    <p class="sec" style="margin-top:12px">How many tokens did today earn?</p>
+    <div class="token-assess">
+      <div class="token-assess-num" id="cmd-token-num">0</div>
+      <div class="token-assess-btns">
+        <button class="ta-btn ta-plus" onclick="adjustCMDToken(1)">+</button>
+        <button class="ta-btn ta-minus" onclick="adjustCMDToken(-1)">−</button>
+      </div>
+      <div class="ta-label">Tap + for every time you pushed through something hard today — even when you didn't feel like it.</div>
+    </div>
+
+    <p class="sec">One word or thought about today</p>
+    <input class="inp" id="cmd-reflection" placeholder="e.g. Tired but grateful, Proud, Hard but good..." style="margin-bottom:14px"/>
+
+    <button class="btn btn-terra" style="width:100%;margin-bottom:8px;padding:12px" onclick="confirmCloseDay()">✓ Save & log day</button>
+    <button onclick="logToGCal(ls('last_close_reflection'),ls('last_close_tokens'))" style="width:100%;padding:11px;background:var(--sky-ll);border:1px solid var(--sky-l);color:var(--sky);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;margin-bottom:8px">📅 Log to Google Calendar</button>
+    <a href="https://dayone.me" target="_blank" class="oneday-btn">
+      <div class="oneday-icon">📖</div>
+      <div><div class="oneday-title">Open OneDay journal</div><div class="oneday-sub">Use your 5-min closing template</div></div>
+    </a>
+    <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:10px" onclick="document.getElementById('cmd-modal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════
+const PFX = 'lifeos_';
+function ls(key, val) {
+  if (val === undefined) { try { return JSON.parse(localStorage.getItem(PFX+key)); } catch(e) { return null; } }
+  try { localStorage.setItem(PFX+key, JSON.stringify(val)); } catch(e){}
+}
+function getToday() { return new Date().toISOString().slice(0,10); }
+function getWeekKey() { const d=new Date(); d.setDate(d.getDate()-d.getDay()+1); return 'wk_'+d.toISOString().slice(0,10); }
+
+// ═══════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const HABITS=['walk','read','journal','phone','water','prayer','kids'];
+const HABIT_LABELS={walk:'🚶 Walking',read:'📖 Reading',journal:'✍️ Journaling',phone:'📵 Phone bricked',water:'💧 Water intake',prayer:'🙏 Prayer',kids:'👶 1:1 with kids'};
+const SUBTASK_COUNTS={laundry:3,dishes:2,counters:3,dinner:2};
+const TASK_NAMES={laundry:'Laundry cycle',dishes:'Dishes cycle',counters:'Wipe counters',dinner:'Decide dinner'};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let activityLog = ls('activity_log') || [];
+let tokens = ls('tokens') || 0;
+let streakDays = ls('streak_days') || 0;
+let isWeekend = ls('is_weekend') || false;
+let subtaskState = {};
+let taskDone = {};
+let drState = {};
+let habitToday = {};
+let habitWeek = {};
+let weeklyTasks = {};
+let cmdTokenAdjust = 0;
+
+// ═══════════════════════════════════════
+// DATE & RESET CHECKS
+// ═══════════════════════════════════════
+function initDate() {
+  const n = new Date();
+  const dl = document.getElementById('today-date-lbl');
+  if(dl) dl.textContent = `${DAYS[n.getDay()]} · ${MONTHS[n.getMonth()]} ${n.getDate()}`;
+  const gt = document.getElementById('today-greeting');
+  const h = n.getHours();
+  if(gt) gt.textContent = h<12?'Good morning.':h<17?'Good afternoon.':'Good evening.';
+  const wl = document.getElementById('week-lbl');
+  if(wl) { const s=new Date(n); s.setDate(n.getDate()-n.getDay()+1); const e=new Date(s); e.setDate(s.getDate()+6); wl.textContent=`Week of ${MONTHS[s.getMonth()]} ${s.getDate()} – ${e.getDate()}`; }
+  checkDailyReset();
+  checkWeeklyReset();
+}
+
+function checkDailyReset() {
+  const last = ls('last_day'); const today = getToday();
+  if(last !== today) {
+    ls('last_day', today);
+    ls('subtask_state', {laundry:[false,false,false],dishes:[false,false],counters:[false,false,false],dinner:[false,false]});
+    ls('task_done', {laundry:false,dishes:false,counters:false,dinner:false});
+    ls('dr_state', {});
+    ls('habit_today', {});
+    ls('energy', 'full');
+  }
+}
+
+function checkWeeklyReset() {
+  const last = ls('last_week'); const thisWeek = getWeekKey();
+  if(last !== thisWeek) {
+    ls('last_week', thisWeek);
+    ls('weekly_tasks', {});
+    ls('habit_week', {});
+  }
+}
+
+// ═══════════════════════════════════════
+// PAGES
+// ═══════════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  document.getElementById('scroll-area').scrollTop = 0;
+}
+
+// ═══════════════════════════════════════
+// MODE
+// ═══════════════════════════════════════
+function toggleMode() {
+  isWeekend = !isWeekend; ls('is_weekend', isWeekend);
+  const b = document.getElementById('mode-toggle');
+  const th = document.getElementById('today-hero'), wh = document.getElementById('weekend-hero');
+  if(isWeekend) { b.textContent='Weekend'; b.className='mode-badge weekend'; th.style.display='none'; wh.style.display=''; }
+  else { b.textContent='Weekday'; b.className='mode-badge weekday'; th.style.display=''; wh.style.display='none'; }
+  logAction('Switched to '+(isWeekend?'weekend':'weekday')+' mode','gold');
+}
+
+// ═══════════════════════════════════════
+// WEEK AT A GLANCE
+// ═══════════════════════════════════════
+function buildWAG() {
+  const container = document.getElementById('wag-container');
+  if(!container) return;
+  const now = new Date();
+  const monday = new Date(now); monday.setDate(now.getDate()-now.getDay()+1);
+  const wagData = ls('wag_data') || {};
+  container.innerHTML = '';
+  for(let i=0; i<7; i++) {
+    const d = new Date(monday); d.setDate(monday.getDate()+i);
+    const dayKey = d.toISOString().slice(0,10);
+    const isToday = d.toDateString() === now.toDateString();
+    const data = wagData[dayKey] || {};
+    const dayName = DAYS_SHORT[(i+1)%7];
+    const preview = data.meal || data.notes || '';
+    const div = document.createElement('div');
+    div.className = 'wag-day' + (isToday?' today-day':'');
+    div.innerHTML = `
+      <div class="wag-day-header" onclick="toggleWAGDay('wagbody-${dayKey}','wagarrow-${dayKey}')">
+        <span class="wag-day-label">${dayName} ${d.getDate()}</span>
+        ${isToday?'<span class="wag-today-tag">Today</span>':''}
+        <span class="wag-day-preview" id="wagpreview-${dayKey}">${preview}</span>
+        <span class="wag-arrow${isToday?' open':''}" id="wagarrow-${dayKey}">▾</span>
+      </div>
+      <div class="wag-day-body${isToday?' open':''}" id="wagbody-${dayKey}">
+        <div class="wag-field"><div class="wag-field-label">Notes</div><textarea class="wag-input" rows="2" placeholder="Anything today..." data-key="${dayKey}" data-field="notes" onchange="saveWAGField(this)" oninput="saveWAGField(this)">${data.notes||''}</textarea></div>
+        <div class="wag-field"><div class="wag-field-label">Meal / Dinner</div><input class="wag-input" placeholder="What's for dinner?" value="${data.meal||''}" data-key="${dayKey}" data-field="meal" onchange="saveWAGField(this)" oninput="saveWAGField(this)"/></div>
+        <div class="wag-field"><div class="wag-field-label">Reading / Listening</div><input class="wag-input" placeholder="Book, podcast, album..." value="${data.reading||''}" data-key="${dayKey}" data-field="reading" onchange="saveWAGField(this)" oninput="saveWAGField(this)"/></div>
+      </div>`;
+    container.appendChild(div);
+  }
+}
+
+function toggleWAGDay(bodyId, arrowId) {
+  const body = document.getElementById(bodyId); const arrow = document.getElementById(arrowId);
+  if(!body) return;
+  const open = body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open', open);
+}
+
+function saveWAGField(el) {
+  const key = el.dataset.key; const field = el.dataset.field;
+  const wagData = ls('wag_data') || {};
+  if(!wagData[key]) wagData[key] = {};
+  wagData[key][field] = el.value || el.textContent || '';
+  ls('wag_data', wagData);
+  const preview = document.getElementById('wagpreview-'+key);
+  if(preview) { const d=wagData[key]; preview.textContent=d.meal||d.notes||''; }
+}
+
+// ═══════════════════════════════════════
+// ENERGY
+// ═══════════════════════════════════════
+let currentEnergy = 'full';
+function setEnergy(e) {
+  currentEnergy = e; ls('energy', e);
+  const cfg = {full:{bc:'var(--sage)',bg:'var(--sage-ll)',c:'var(--sage)'},low:{bc:'var(--gold)',bg:'var(--gold-ll)',c:'var(--gold)'},rest:{bc:'var(--lav)',bg:'var(--lav-ll)',c:'var(--lav)'}};
+  ['full','low','rest'].forEach(x=>{
+    const btn=document.getElementById('e-'+x); if(!btn) return;
+    btn.style.borderColor=x===e?cfg[x].bc:'var(--border)';
+    btn.style.background=x===e?cfg[x].bg:'var(--surface)';
+    btn.style.color=x===e?cfg[x].c:'';
+  });
+  document.getElementById('rest-card').classList.toggle('show',e==='rest');
+  document.getElementById('low-note').classList.toggle('show',e==='low');
+}
+
+// ═══════════════════════════════════════
+// TASK GROUPS
+// ═══════════════════════════════════════
+function toggleGroupMaster(key) {
+  const allDone = taskDone[key];
+  const newState = !allDone;
+  subtaskState[key] = Array(SUBTASK_COUNTS[key]).fill(newState);
+  taskDone[key] = newState;
+  ls('subtask_state', subtaskState); ls('task_done', taskDone);
+  const sts = document.getElementById('sts-'+key);
+  if(sts) {
+    sts.querySelectorAll('.subtask').forEach(st=>{
+      st.classList.toggle('done',newState);
+      const chk=st.querySelector('.st-chk'); if(chk) chk.textContent=newState?'✓':'';
+    });
+    sts.classList.toggle('open', true);
+    const tog=document.getElementById('tgt-'+key); if(tog) tog.classList.toggle('open',true);
+  }
+  updateGroupUI(key);
+  if(newState) logAction('✓ '+TASK_NAMES[key]+' — all done','sage');
+}
+
+function toggleSub(el, key, idx) {
+  el.classList.toggle('done');
+  const isDone = el.classList.contains('done');
+  const chk = el.querySelector('.st-chk'); if(chk) chk.textContent=isDone?'✓':'';
+  if(!subtaskState[key]) subtaskState[key]=Array(SUBTASK_COUNTS[key]).fill(false);
+  subtaskState[key][idx] = isDone;
+  ls('subtask_state', subtaskState);
+  updateGroupUI(key);
+  if(isDone) logAction('✓ '+el.querySelector('.st-lbl').textContent,'sage');
+}
+
+function updateGroupUI(key) {
+  const states = subtaskState[key]||[]; const total=states.length; const done=states.filter(Boolean).length;
+  const chk=document.getElementById('tgc-'+key); const prog=document.getElementById('tgp-'+key);
+  if(prog) prog.textContent=`${done}/${total}`;
+  if(done===total&&total>0){if(chk){chk.className='tg-check done';chk.textContent='✓';} taskDone[key]=true;}
+  else if(done>0){if(chk){chk.className='tg-check partial';chk.textContent='~';} taskDone[key]=false;}
+  else{if(chk){chk.className='tg-check';chk.textContent='';} taskDone[key]=false;}
+  ls('task_done', taskDone);
+  updateDailyProg();
+}
+
+function updateDailyProg() {
+  const keys=Object.keys(SUBTASK_COUNTS);
+  const done=keys.filter(k=>taskDone[k]).length; const total=keys.length;
+  const fill=document.getElementById('tp-fill'); if(fill) fill.style.width=Math.round(done/total*100)+'%';
+  const count=document.getElementById('tp-count'); if(count) count.textContent=`${done} / ${total}`;
+  keys.forEach((k,i)=>{
+    const dot=document.getElementById('tpd-'+i); if(!dot) return;
+    if(taskDone[k]) dot.className='tp-dot done';
+    else if((subtaskState[k]||[]).some(Boolean)) dot.className='tp-dot partial';
+    else dot.className='tp-dot';
+  });
+  if(done===total) {
+    const lastSD=ls('last_streak_day'); const today=getToday();
+    if(lastSD!==today) {
+      ls('last_streak_day',today);
+      const yd=new Date(); yd.setDate(yd.getDate()-1);
+      streakDays = lastSD===yd.toISOString().slice(0,10) ? streakDays+1 : 1;
+      ls('streak_days',streakDays); updateStreakUI();
+    }
+  }
+}
+
+function restoreTaskGroups() {
+  Object.keys(SUBTASK_COUNTS).forEach(key=>{
+    const states=subtaskState[key]||[];
+    const sts=document.getElementById('sts-'+key);
+    if(sts) sts.querySelectorAll('.subtask').forEach((st,i)=>{
+      const d=states[i]||false; st.classList.toggle('done',d);
+      const chk=st.querySelector('.st-chk'); if(chk) chk.textContent=d?'✓':'';
+    });
+    updateGroupUI(key);
+  });
+}
+
+// ═══════════════════════════════════════
+// DROPDOWNS
+// ═══════════════════════════════════════
+function toggleDrop(id) {
+  const body=document.getElementById(id+'-body'); const arrow=document.getElementById(id+'-arrow');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',open);
+}
+
+function toggleRes(bodyId, arrowId) {
+  const body=document.getElementById(bodyId); const arrow=document.getElementById(arrowId);
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',open);
+}
+
+// ═══════════════════════════════════════
+// DAILY RHYTHM
+// ═══════════════════════════════════════
+function toggleDR(el, id) {
+  el.classList.toggle('done');
+  const isDone=el.classList.contains('done');
+  const chk=el.querySelector('.dr-chk'); if(chk) chk.textContent=isDone?'✓':'';
+  drState[id]=isDone; ls('dr_state',drState);
+  updateDRMeta();
+  if(isDone) logAction('✓ '+el.querySelector('.dr-text').textContent,'sage');
+}
+
+function updateDRMeta() {
+  const total=Object.keys(drState).length; const done=Object.values(drState).filter(Boolean).length;
+  const m=document.getElementById('dr-meta'); if(m) m.textContent=`${done} done`;
+}
+
+function restoreDR() {
+  document.querySelectorAll('.dr-row').forEach(row=>{
+    const oc=row.getAttribute('onclick'); if(!oc) return;
+    const m=oc.match(/'([^']+)'\)/); if(!m) return;
+    const id=m[1];
+    if(drState[id]) { row.classList.add('done'); const chk=row.querySelector('.dr-chk'); if(chk) chk.textContent='✓'; }
+  });
+  updateDRMeta();
+}
+
+// ═══════════════════════════════════════
+// HABITS
+// ═══════════════════════════════════════
+function toggleHabitToday(el, key) {
+  el.classList.toggle('done');
+  const isDone=el.classList.contains('done');
+  const chk=el.querySelector('.ht-chk'); if(chk) chk.textContent=isDone?'✓':'';
+  habitToday[key]=isDone; ls('habit_today',habitToday);
+  const todayDI=new Date().getDay(); const wi=todayDI===0?6:todayDI-1;
+  if(!habitWeek[key]) habitWeek[key]=Array(7).fill(false);
+  habitWeek[key][wi]=isDone; ls('habit_week',habitWeek);
+  updateHabitWeekRow(key);
+  if(isDone) logAction('✓ Habit: '+HABIT_LABELS[key],'teal');
+}
+
+function restoreHabitToday() {
+  document.querySelectorAll('.habit-today-row').forEach(row=>{
+    const oc=row.getAttribute('onclick'); if(!oc) return;
+    const m=oc.match(/'([^']+)'\)/); if(!m) return;
+    const key=m[1];
+    if(habitToday[key]) { row.classList.add('done'); const chk=row.querySelector('.ht-chk'); if(chk) chk.textContent='✓'; }
+  });
+}
+
+function buildHabitWeekGrid() {
+  const c=document.getElementById('habit-week-rows'); if(!c) return;
+  c.innerHTML='';
+  HABITS.forEach(key=>{
+    const row=document.createElement('div'); row.className='habit-week-row';
+    const dots=Array(7).fill(0).map((_,i)=>{
+      const on=(habitWeek[key]||[])[i];
+      return `<div class="hw-dot${on?' on':''}" onclick="toggleHWDot(this,'${key}',${i})">${on?'✓':''}</div>`;
+    }).join('');
+    const streak=calcStreak(key);
+    row.innerHTML=`<div class="hw-habit-name">${HABIT_LABELS[key]}</div><div class="hw-dots" id="hwdots-${key}">${dots}</div><div class="hw-streak" id="hwstr-${key}">${streak>0?streak+'🔥':'—'}</div>`;
+    c.appendChild(row);
+  });
+}
+
+function toggleHWDot(dot, key, i) {
+  if(!habitWeek[key]) habitWeek[key]=Array(7).fill(false);
+  habitWeek[key][i]=!habitWeek[key][i]; ls('habit_week',habitWeek);
+  dot.classList.toggle('on'); dot.textContent=dot.classList.contains('on')?'✓':'';
+  const s=document.getElementById('hwstr-'+key); const streak=calcStreak(key);
+  if(s) s.textContent=streak>0?streak+'🔥':'—';
+}
+
+function updateHabitWeekRow(key) {
+  const c=document.getElementById('hwdots-'+key); if(!c) return;
+  c.querySelectorAll('.hw-dot').forEach((d,i)=>{
+    const on=(habitWeek[key]||[])[i]; d.classList.toggle('on',!!on); d.textContent=on?'✓':'';
+  });
+  const s=document.getElementById('hwstr-'+key); const streak=calcStreak(key);
+  if(s) s.textContent=streak>0?streak+'🔥':'—';
+}
+
+function calcStreak(key) {
+  const arr=habitWeek[key]||[]; let s=0;
+  for(let i=arr.length-1;i>=0;i--){if(arr[i])s++;else break;} return s;
+}
+
+function resetHabits() { ls('habit_week',{}); habitWeek={}; buildHabitWeekGrid(); logAction('↺ Habits week reset','gold'); }
+
+// ═══════════════════════════════════════
+// HH WEEKLY TASKS
+// ═══════════════════════════════════════
+function toggleHH(el, name) {
+  el.classList.toggle('done');
+  const chk=el.querySelector('.hh-chk'); const isDone=el.classList.contains('done');
+  if(chk) chk.textContent=isDone?'✓':'';
+  weeklyTasks[name]=isDone; ls('weekly_tasks',weeklyTasks);
+  if(isDone) logAction('🏠 '+name,'terra');
+  updateWeekProg();
+}
+
+function updateWeekProg() {
+  const all=document.querySelectorAll('#weekly-tasks .hh');
+  const done=document.querySelectorAll('#weekly-tasks .hh.done').length;
+  const pf=document.getElementById('week-pf'); if(pf) pf.style.width=Math.round(done/all.length*100)+'%';
+  const ct=document.getElementById('week-done-ct'); if(ct) ct.textContent=`${done} / ${all.length} done`;
+}
+
+function resetWeek() {
+  ls('weekly_tasks',{}); weeklyTasks={};
+  document.querySelectorAll('#weekly-tasks .hh').forEach(el=>{ el.classList.remove('done'); const chk=el.querySelector('.hh-chk'); if(chk) chk.textContent=''; });
+  updateWeekProg(); logAction('↺ Weekly tasks reset','gold');
+}
+
+function restoreWeeklyTasks() {
+  document.querySelectorAll('#weekly-tasks .hh').forEach(el=>{
+    const oc=el.getAttribute('onclick'); if(!oc) return;
+    const m=oc.match(/'([^']+)'\)/); if(!m) return;
+    if(weeklyTasks[m[1]]) { el.classList.add('done'); const chk=el.querySelector('.hh-chk'); if(chk) chk.textContent='✓'; }
+  });
+  updateWeekProg();
+}
+
+// ═══════════════════════════════════════
+// REFLECT
+// ═══════════════════════════════════════
+let savedReflections = ls('saved_reflections') || [];
+function showReflTab(tab, btn) {
+  document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  document.getElementById('refl-current').style.display=tab==='current'?'':'none';
+  document.getElementById('refl-archive').style.display=tab==='archive'?'':'none';
+}
+function cyclePri(el) { const s=['⬜','✅','❌']; el.textContent=s[(s.indexOf(el.textContent)+1)%s.length]; }
+function addBacklog() {
+  const i=document.getElementById('backlog-input'); const v=i.value.trim(); if(!v) return;
+  const d=document.createElement('div'); d.className='backlog-item';
+  d.innerHTML=`<span>⏱</span><span style="flex:1">${v}</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('backlog-list').appendChild(d); i.value='';
+}
+function saveReflection() {
+  const n=new Date(); const ds=`${MONTHS[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;
+  const well=document.getElementById('r-well')?.value.trim()||'';
+  savedReflections.unshift({date:ds,well,time:n.toISOString()});
+  ls('saved_reflections',savedReflections); renderArchive();
+  logAction('✦ Reflection saved — '+ds,'lav');
+  const b=event.target; b.textContent='✓ Saved!'; setTimeout(()=>b.textContent='✓ Save this reflection',2000);
+}
+function renderArchive() {
+  const c=document.getElementById('archive-list');
+  if(!savedReflections.length){c.innerHTML='<div style="text-align:center;padding:24px;color:var(--ink3);font-size:.81rem;font-style:italic">No saved reflections yet.</div>';return;}
+  c.innerHTML=savedReflections.map(r=>`<div class="archive-entry" style="background:var(--surface);border-radius:11px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px"><div style="font-size:.61rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600;margin-bottom:5px">${r.date}</div>${r.well?`<div style="font-size:.68rem;color:var(--ink3);margin-bottom:2px">What went well</div><div style="font-family:'Lora',serif;font-style:italic;font-size:.82rem;line-height:1.5;margin-bottom:5px">${r.well}</div>`:''}<div style="font-size:.69rem;color:var(--ink3);font-style:italic">Full reflection saved</div></div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// CAPTURE
+// ═══════════════════════════════════════
+function initCapture() {
+  const el=document.getElementById('capture-text'); if(!el) return;
+  el.value=ls('capture_text')||'';
+  el.addEventListener('input',()=>ls('capture_text',el.value));
+}
+
+// ═══════════════════════════════════════
+// REWARDS & TOKENS
+// ═══════════════════════════════════════
+function earnToken() {
+  if(tokens>=20) return;
+  tokens++; ls('tokens',tokens); updateTokenUI();
+  logAction('🪙 Token earned! ('+tokens+' total)','gold');
+  addRewardHistory('Earned a token 🪙');
+}
+function spendToken() {
+  if(tokens<=0) return;
+  tokens--; ls('tokens',tokens); updateTokenUI();
+  logAction('🎁 Token spent','terra');
+}
+function updateTokenUI() {
+  ['tb-token-count','bottom-token-num'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=tokens; });
+  const track=document.getElementById('token-track');
+  if(track) {
+    track.innerHTML='';
+    for(let i=0;i<20;i++){
+      const d=document.createElement('div');
+      d.className='tok'+(i<tokens?' filled':'')+(i===4||i===9||i===14||i===19?' milestone':'');
+      d.textContent=i<tokens?'✓':''; track.appendChild(d);
+    }
+  }
+  const goal=document.getElementById('tb-goal-label');
+  if(goal) goal.textContent=tokens<5?`${5-tokens} more tokens for a reward!`:tokens<10?`${10-tokens} more for a bonus reward!`:`${tokens} tokens — you crushed it! 🎉`;
+  const mini=document.getElementById('bottom-mini-dots');
+  if(mini) mini.querySelectorAll('.tmini').forEach((d,i)=>d.classList.toggle('filled',i<Math.min(tokens,5)));
+}
+function redeemReward(el, name) {
+  el.classList.toggle('redeemed');
+  if(el.classList.contains('redeemed')) { logAction('🎁 Reward: '+name,'gold'); addRewardHistory('Redeemed: '+name+' 🎁'); spendToken(); }
+}
+function addCustomReward() {
+  const ni=document.getElementById('custom-reward-input'); const ci=document.getElementById('custom-reward-cost');
+  const name=ni.value.trim(); if(!name) return;
+  const cost=parseInt(ci.value)||5;
+  const saved=ls('custom_rewards')||[];
+  saved.push({name,cost}); ls('custom_rewards',saved);
+  ni.value=''; ci.value='';
+  renderCustomRewards();
+}
+function renderCustomRewards() {
+  const c=document.getElementById('custom-reward-list'); if(!c) return;
+  const saved=ls('custom_rewards')||[];
+  if(!saved.length){c.innerHTML='';return;}
+  c.innerHTML=saved.map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--surface);border-radius:9px;border:1px dashed var(--terra-l);margin-bottom:5px;font-size:.81rem"><span style="flex:1">${r.name}</span><span style="font-size:.68rem;color:var(--gold);font-weight:600">${r.cost} tokens</span><button onclick="redeemCustom(${i})" style="padding:3px 8px;border-radius:7px;background:var(--terra);color:white;border:none;font-size:.68rem;cursor:pointer">Redeem</button><button onclick="removeCustom(${i})" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.8rem">✕</button></div>`).join('');
+}
+function redeemCustom(i) {
+  const saved=ls('custom_rewards')||[];
+  if(tokens<saved[i].cost){alert(`You need ${saved[i].cost} tokens for this reward. You have ${tokens}.`);return;}
+  tokens-=saved[i].cost; ls('tokens',tokens); updateTokenUI();
+  logAction('🎁 Custom reward: '+saved[i].name,'gold');
+  addRewardHistory('Redeemed: '+saved[i].name+' 🎁');
+}
+function removeCustom(i) {
+  const saved=ls('custom_rewards')||[]; saved.splice(i,1); ls('custom_rewards',saved); renderCustomRewards();
+}
+function addRewardHistory(text) {
+  const h=ls('reward_history')||[]; const n=new Date();
+  h.unshift({text,time:`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')} · ${MONTHS[n.getMonth()].slice(0,3)} ${n.getDate()}`});
+  if(h.length>20) h.pop(); ls('reward_history',h); renderRewardHistory();
+}
+function renderRewardHistory() {
+  const c=document.getElementById('reward-history'); if(!c) return;
+  const h=ls('reward_history')||[];
+  if(!h.length){c.innerHTML='<div style="text-align:center;padding:18px;color:var(--ink3);font-size:.81rem;font-style:italic">Redeem your first reward!</div>';return;}
+  c.innerHTML=h.map(r=>`<div class="history-item"><div class="history-dot"></div><span style="flex:1">${r.text}</span><span class="history-time">${r.time}</span></div>`).join('');
+}
+function pickFun(el) { document.querySelectorAll('.fun-tile').forEach(t=>t.classList.remove('picked')); el.classList.add('picked'); logAction('🎵 Fun booster: '+el.textContent.trim(),'lav'); }
+
+// ═══════════════════════════════════════
+// STREAK
+// ═══════════════════════════════════════
+function updateStreakUI() {
+  const el=document.getElementById('streak-days'); if(el) el.textContent=streakDays;
+  const sub=document.getElementById('streak-sub');
+  if(sub) sub.textContent=streakDays===0?'Complete today\'s tasks to start your streak!':streakDays===1?'Day 1 — you showed up today!':streakDays+'days in a row — keep going!';
+}
+
+// ═══════════════════════════════════════
+// CLOSE MY DAY MODAL
+// ═══════════════════════════════════════
+function openCloseMyDay() {
+  cmdTokenAdjust=0;
+  const n=new Date();
+  const dateEl=document.getElementById('cmd-date');
+  if(dateEl) dateEl.textContent=`${DAYS[n.getDay()]} · ${MONTHS[n.getMonth()]} ${n.getDate()}`;
+  // build summary
+  const sumEl=document.getElementById('cmd-summary'); if(!sumEl) return;
+  const items=[];
+  Object.entries(taskDone).forEach(([k,v])=>{ if(v) items.push({text:TASK_NAMES[k],color:'sage'}); });
+  Object.entries(habitToday).forEach(([k,v])=>{ if(v) items.push({text:HABIT_LABELS[k],color:'teal'}); });
+  const drDone=Object.values(drState).filter(Boolean).length;
+  if(drDone>0) items.push({text:`${drDone} daily rhythm items`,color:'lav'});
+  if(!items.length) { sumEl.innerHTML='<div style="font-size:.8rem;color:var(--ink3);font-style:italic;padding:8px 0">Nothing logged yet today — that\'s okay too.</div>'; }
+  else { sumEl.innerHTML=items.map(it=>`<div class="summary-item"><div class="summary-dot" style="background:var(--${it.color})"></div><span>${it.text}</span></div>`).join(''); }
+  document.getElementById('cmd-token-num').textContent='0';
+  const ri=document.getElementById('cmd-reflection'); if(ri) ri.value='';
+  document.getElementById('cmd-modal').classList.add('open');
+}
+
+function adjustCMDToken(delta) {
+  cmdTokenAdjust=Math.max(0,cmdTokenAdjust+delta);
+  const el=document.getElementById('cmd-token-num'); if(el) el.textContent=cmdTokenAdjust;
+}
+
+function confirmCloseDay() {
+  const toAdd=Math.min(cmdTokenAdjust, 20-tokens);
+  if(toAdd>0) { tokens+=toAdd; ls('tokens',tokens); updateTokenUI(); logAction(`🪙 +${toAdd} token${toAdd>1?'s':''} from Close My Day`,'gold'); }
+  const ri=document.getElementById('cmd-reflection'); const note=ri?ri.value.trim():'';
+  if(note) { const closings=ls('day_closings')||[]; const n=new Date(); closings.unshift({note,date:`${MONTHS[n.getMonth()].slice(0,3)} ${n.getDate()}`}); if(closings.length>30) closings.pop(); ls('day_closings',closings); logAction('✦ Day closed: '+note,'lav'); }
+  addRewardHistory(`Day closed${note?' — '+note:''} 🌙`);
+  // store for gcal
+  ls('last_close_reflection', note);
+  ls('last_close_tokens', cmdTokenAdjust);
+  document.getElementById('cmd-modal').classList.remove('open');
+}
+
+function closeCMDIfOverlay(e) { if(e.target===document.getElementById('cmd-modal')) document.getElementById('cmd-modal').classList.remove('open'); }
+
+// ═══════════════════════════════════════
+// GCAL & EXPORT
+// ═══════════════════════════════════════
+function logToGCal(cmdReflection, cmdTokensEarned) {
+  const n = new Date();
+  const dateStr = n.toISOString().slice(0,10).replace(/-/g,'');
+  const today = n.toISOString().slice(0,10);
+  const energyLabel = currentEnergy==='full'?'⚡ Full energy':currentEnergy==='low'?'🌿 Low energy':'💛 Rest day';
+
+  // ── DAILY TASKS ──
+  const taskKeys = Object.keys(SUBTASK_COUNTS);
+  let taskLines = '── DAILY TASKS ──\n';
+  taskKeys.forEach(k => { taskLines += `${taskDone[k]?'✓':'✗'} ${TASK_NAMES[k]}\n`; });
+
+  // ── HABITS ──
+  let habitLines = '\n── HABITS ──\n';
+  HABITS.forEach(k => { habitLines += `${habitToday[k]?'✓':'✗'} ${HABIT_LABELS[k]}\n`; });
+
+  // ── DAILY RHYTHM ──
+  const drMap = {
+    am1:'Up at 6:30 AM', am2:'Bible recap / devotional', am3:'Breakfast + pack lunch',
+    en1:'Read 10 min', en2:'Journal prompt',
+    lf1:'Afternoon coffee/drink', lf2:'Listen to music', lf3:'Pinterest (with timer)',
+    cf1:'1:1 with each kid', cf2:'Movement with kids', cf3:'Daily reading',
+    sc1:'Shower + get ready', sc2:'Daily movement / walk', sc3:'Water intake', sc4:'Less phone',
+    wd1:'Phone bricked at 9pm', wd2:'Skincare + teeth', wd3:'Prayer time'
+  };
+  const drSections = {
+    'AM Routine':['am1','am2','am3'],
+    'Energizing':['en1','en2'],
+    'Light + Fun':['lf1','lf2','lf3'],
+    'Care for Them':['cf1','cf2','cf3'],
+    'Self Care':['sc1','sc2','sc3','sc4'],
+    'Wind Down':['wd1','wd2','wd3']
+  };
+  let drLines = '\n── DAILY RHYTHM ──\n';
+  Object.entries(drSections).forEach(([section, keys]) => {
+    const items = keys.map(k => `  ${drState[k]?'✓':'✗'} ${drMap[k]}`).join('\n');
+    drLines += `${section}:\n${items}\n`;
+  });
+
+  // ── WAG: today's fields ──
+  const wagData = ls('wag_data') || {};
+  const todayWAG = wagData[today] || {};
+  let wagLines = '';
+  if(todayWAG.notes || todayWAG.meal || todayWAG.reading) {
+    wagLines = '\n── TODAY\'S NOTES ──\n';
+    if(todayWAG.notes) wagLines += `Notes: ${todayWAG.notes}\n`;
+    if(todayWAG.meal) wagLines += `Dinner: ${todayWAG.meal}\n`;
+    if(todayWAG.reading) wagLines += `Reading/Listening: ${todayWAG.reading}\n`;
+  }
+
+  // ── CAPTURE ──
+  const captureText = (ls('capture_text')||'').trim();
+  let captureLines = '';
+  if(captureText) {
+    const truncated = captureText.length > 300 ? captureText.slice(0,300)+'...' : captureText;
+    captureLines = `\n── CAPTURE ──\n${truncated}\n`;
+  }
+
+  // ── CLOSE MY DAY ──
+  let closeLines = '\n── CLOSE MY DAY ──\n';
+  closeLines += `Energy: ${energyLabel}\n`;
+  if(cmdReflection) closeLines += `Reflection: ${cmdReflection}\n`;
+  if(cmdTokensEarned) closeLines += `Tokens earned today: ${cmdTokensEarned}\n`;
+  closeLines += `Running total: ${tokens} tokens\n`;
+  closeLines += `Streak: ${streakDays} day${streakDays!==1?'s':''} 🔥`;
+
+  const title = `Life OS · ${DAYS[n.getDay()]} ${MONTHS[n.getMonth()]} ${n.getDate()}`;
+  const details = taskLines + habitLines + drLines + wagLines + captureLines + closeLines;
+
+  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${dateStr}/${dateStr}&details=${encodeURIComponent(details)}`,'_blank');
+  logAction('📅 Logged to Google Calendar','sky');
+}
+
+function exportWeeklyLog() {
+  const n=new Date();
+  const lines=[`Life OS Week Export · ${MONTHS[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`,''];
+  lines.push('ACTIVITY LOG:');
+  activityLog.forEach(e=>lines.push(`${e.time} — ${e.text}`));
+  lines.push('','HABIT SUMMARY:');
+  HABITS.forEach(k=>{ const arr=habitWeek[k]||[]; lines.push(`${HABIT_LABELS[k]}: ${arr.filter(Boolean).length}/7 days`); });
+  lines.push('',`Tokens: ${tokens}`,`Streak: ${streakDays} days`);
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=`lifeos_${n.toISOString().slice(0,10)}.txt`; a.click(); URL.revokeObjectURL(url);
+  logAction('📥 Week log exported','sky');
+}
+
+// ═══════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════
+function logAction(text, color) {
+  const n=new Date(); const t=`${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}`;
+  activityLog.unshift({text,color,time:t}); if(activityLog.length>100) activityLog.pop();
+  ls('activity_log',activityLog); renderLog();
+}
+function renderLog() {
+  const c=document.getElementById('activity-log'); if(!c) return;
+  if(!activityLog.length){c.innerHTML='<div style="text-align:center;padding:22px;color:var(--ink3);font-size:.81rem;font-style:italic">Your actions appear here.</div>';return;}
+  c.innerHTML=activityLog.map(e=>`<div class="log-item"><span class="log-time">${e.time}</span><div class="log-dot ld-${e.color}"></div><span style="flex:1;line-height:1.4">${e.text}</span></div>`).join('');
+}
+function clearLog() { activityLog=[]; ls('activity_log',[]); renderLog(); }
+
+// ═══════════════════════════════════════
+// RESOURCES
+// ═══════════════════════════════════════
+function addDriveLink() {
+  const i=document.getElementById('drive-input'); const v=i.value.trim(); if(!v) return;
+  const d=document.createElement('div'); d.className='gdrive-link'; d.style.cursor='default';
+  d.innerHTML=`<span>📂</span><span style="flex:1" contenteditable="true">${v}</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer;margin-left:auto" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('gdrive-links').appendChild(d); i.value='';
+}
+
+// ═══════════════════════════════════════
+// RESTORE ALL
+// ═══════════════════════════════════════
+function restoreAll() {
+  subtaskState = ls('subtask_state') || {laundry:[false,false,false],dishes:[false,false],counters:[false,false,false],dinner:[false,false]};
+  taskDone = ls('task_done') || {laundry:false,dishes:false,counters:false,dinner:false};
+  drState = ls('dr_state') || {};
+  habitToday = ls('habit_today') || {};
+  habitWeek = ls('habit_week') || {};
+  weeklyTasks = ls('weekly_tasks') || {};
+  tokens = ls('tokens') || 0;
+  streakDays = ls('streak_days') || 0;
+
+  // mode
+  isWeekend = ls('is_weekend') || false;
+  if(isWeekend) {
+    const b=document.getElementById('mode-toggle'); if(b){b.textContent='Weekend';b.className='mode-badge weekend';}
+    const th=document.getElementById('today-hero'),wh=document.getElementById('weekend-hero');
+    if(th)th.style.display='none'; if(wh)wh.style.display='';
+  }
+
+  // energy
+  const savedE = ls('energy') || 'full';
+  currentEnergy = savedE;
+  setEnergy(savedE);
+
+  // tasks
+  restoreTaskGroups();
+  restoreDR();
+  restoreHabitToday();
+  buildHabitWeekGrid();
+  restoreWeeklyTasks();
+
+  // tokens + streaks
+  updateTokenUI();
+  updateStreakUI();
+
+  // log + rewards
+  activityLog = ls('activity_log') || [];
+  renderLog();
+  renderArchive();
+  renderRewardHistory();
+  renderCustomRewards();
+
+  // capture
+  initCapture();
+
+  // wag
+  buildWAG();
+}
+
+// ═══════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════
+initDate();
+restoreAll();
+</script>
+</body>
+</html>
