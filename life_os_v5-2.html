@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Life OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F0E8;--surface:#FDFAF5;--surface2:#F0EBE0;--surface3:#E8E2D8;
+  --ink:#2A2520;--ink2:#6B6258;--ink3:#A89F94;
+  --sage:#6B8F71;--sage-l:#B8D4BB;--sage-ll:#E4EFE5;--sage-d:#4A6B50;
+  --terra:#B86A4A;--terra-l:#DFA882;--terra-ll:#F5E6DC;
+  --gold:#C09A50;--gold-l:#E8D4A0;--gold-ll:#FBF4E3;
+  --lav:#8A7AAF;--lav-l:#C4B8DC;--lav-ll:#EDE9F5;
+  --sky:#5A8FAF;--sky-ll:#E3EEF5;
+  --rose:#B87A7A;--rose-ll:#F5E8E8;
+  --teal:#5A9A8F;--teal-ll:#E3F2F0;
+  --border:rgba(42,37,32,0.09);--radius:14px;--shadow:0 2px 16px rgba(42,37,32,0.07);
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;font-size:15px}
+
+/* ── NAV ── */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;height:52px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:300}
+.brand{font-family:'Lora',serif;font-size:1rem;color:var(--ink);display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
+.brand-dot{width:7px;height:7px;border-radius:50%;background:var(--terra);flex-shrink:0}
+.nav-tabs{display:flex;gap:1px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex:1}
+.nav-tabs::-webkit-scrollbar{display:none}
+.ntab{padding:5px 9px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:0.72rem;font-weight:400;color:var(--ink3);cursor:pointer;border-radius:20px;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.ntab:hover{background:var(--surface2);color:var(--ink2)}
+.ntab.active{background:var(--ink);color:white}
+.nav-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.gcal-nav-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--sky-ll);border:1px solid rgba(90,143,175,.3);border-radius:20px;font-size:0.7rem;color:var(--sky);cursor:pointer;text-decoration:none;white-space:nowrap;transition:all .2s;font-family:'Outfit',sans-serif;font-weight:500}
+.gcal-nav-btn:hover{background:var(--sky);color:white}
+.mode-badge{padding:4px 10px;border-radius:20px;font-size:0.67rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;white-space:nowrap;flex-shrink:0;border:none}
+.mode-badge.weekday{background:var(--sage);color:white}
+.mode-badge.weekend{background:var(--gold);color:white}
+
+/* ── PAGES ── */
+.page{display:none;max-width:960px;margin:0 auto;padding:22px 16px 80px;animation:fadeUp .2s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── DINNER PIN ── */
+.dinner-pin{background:linear-gradient(135deg,var(--gold),#D4A840);border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;color:white}
+.dinner-pin-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;opacity:.85;margin-bottom:2px}
+.dinner-pin-name{font-family:'Lora',serif;font-size:1rem;font-weight:500;line-height:1.2}
+.dinner-pin-input{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:5px 10px;font-family:'Outfit',sans-serif;font-size:.82rem;color:white;outline:none;flex:1;min-width:0}
+.dinner-pin-input::placeholder{color:rgba(255,255,255,.7)}
+.dinner-edit-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;color:white;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:'Outfit',sans-serif}
+
+/* ── HERO ── */
+.hero{border-radius:18px;padding:20px 24px;color:white;margin-bottom:16px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+.hero-ey{font-size:.61rem;text-transform:uppercase;letter-spacing:.14em;opacity:.75;margin-bottom:3px}
+.hero-title{font-family:'Lora',serif;font-size:1.4rem;font-weight:400;margin-bottom:3px;position:relative;z-index:1}
+.hero-sub{font-size:.78rem;opacity:.85;line-height:1.5;max-width:500px;position:relative;z-index:1}
+.h-sage{background:linear-gradient(135deg,var(--sage),var(--sage-d))}
+.h-terra{background:linear-gradient(135deg,var(--terra),#9A5030)}
+.h-gold{background:linear-gradient(135deg,var(--gold),#A07830)}
+.h-lav{background:linear-gradient(135deg,var(--lav),#6A5A9F)}
+.h-sky{background:linear-gradient(135deg,var(--sky),#3A6F8F)}
+.h-rose{background:linear-gradient(135deg,var(--rose),#8A5A5A)}
+.h-teal{background:linear-gradient(135deg,var(--teal),#3A7A70)}
+.h-ink{background:linear-gradient(135deg,#3A3530,#5A5048)}
+.h-weekend{background:linear-gradient(135deg,#C09A50,#D4B06A)}
+
+/* ── UTILS ── */
+.sec{font-size:.61rem;text-transform:uppercase;letter-spacing:.13em;color:var(--ink3);font-weight:600;margin-bottom:8px;margin-top:2px}
+.card{background:var(--surface);border-radius:var(--radius);padding:15px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
+.mt{margin-top:14px}
+.divider{height:1px;background:var(--border);margin:13px 0}
+textarea.note{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink);resize:none;line-height:1.6;outline:none;transition:border-color .2s}
+textarea.note:focus{border-color:var(--sage)}
+textarea.note::placeholder{color:var(--ink3)}
+input.inp{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 11px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink);outline:none;transition:border-color .2s;width:100%}
+input.inp:focus{border-color:var(--terra)}
+input.inp::placeholder{color:var(--ink3)}
+select.sel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 10px;font-family:'Outfit',sans-serif;font-size:.79rem;color:var(--ink2);outline:none;cursor:pointer}
+.btn{border:none;border-radius:10px;padding:7px 14px;font-family:'Outfit',sans-serif;font-size:.79rem;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-terra{background:var(--terra);color:white}.btn-terra:hover{opacity:.88}
+.btn-sage{background:var(--sage);color:white}.btn-sage:hover{opacity:.88}
+.btn-gold{background:var(--gold);color:white}.btn-gold:hover{opacity:.88}
+.btn-ghost{background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--surface3)}
+.btn-sm{padding:4px 9px;font-size:.7rem;border-radius:8px}
+.row{display:flex;gap:6px;align-items:flex-start;margin-bottom:8px}
+.ml-auto{margin-left:auto}
+.flex-c{display:flex;align-items:center;gap:7px}
+.gcal-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:.76rem;color:var(--ink2);cursor:pointer;transition:all .2s;text-decoration:none}
+.gcal-btn:hover{background:var(--sky-ll);border-color:var(--sky);color:var(--sky)}
+
+/* ── DAILY PROGRESS ── */
+.task-progress-bar{display:flex;align-items:center;gap:8px;padding:11px 13px;background:var(--surface);border-radius:11px;border:1px solid var(--border);margin-bottom:12px;flex-wrap:wrap}
+.tp-label{font-size:.68rem;color:var(--ink3);font-weight:600;letter-spacing:.05em;white-space:nowrap}
+.tp-track{flex:1;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;min-width:70px}
+.tp-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--sage-d));border-radius:4px;transition:width .4s ease}
+.tp-count{font-size:.7rem;color:var(--sage);font-weight:600;white-space:nowrap}
+.tp-dots{display:flex;gap:5px;margin-left:4px}
+.tp-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--sage-l);transition:all .3s}
+.tp-dot.done{background:var(--sage);border-color:var(--sage);box-shadow:0 0 0 2px rgba(107,143,113,.2)}
+.tp-dot.partial{background:var(--gold);border-color:var(--gold)}
+
+/* ── TASK GROUPS ── */
+.task-group{background:var(--surface);border-radius:11px;border:1px solid var(--border);margin-bottom:7px;overflow:hidden;transition:border-color .15s}
+.task-group:hover{border-color:var(--sage-l)}
+.task-header{display:flex;align-items:center;gap:9px;padding:9px 12px;cursor:pointer;user-select:none}
+.tg-check{width:19px;height:19px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.65rem;transition:all .2s}
+.tg-check.done{background:var(--sage);border-color:var(--sage);color:white}
+.tg-check.partial{background:var(--gold);border-color:var(--gold);color:white}
+.tg-label{font-size:.84rem;flex:1;font-weight:500}
+.tg-prog{font-size:.67rem;color:var(--ink3);margin-right:3px}
+.tg-tog{font-size:.68rem;color:var(--ink3);transition:transform .2s;flex-shrink:0}
+.tg-tog.open{transform:rotate(90deg)}
+.subtasks{display:none;border-top:1px solid var(--border)}
+.subtasks.open{display:block}
+.subtask{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 20px;cursor:pointer;transition:background .12s;border-bottom:1px solid rgba(0,0,0,.04)}
+.subtask:last-child{border-bottom:none}
+.subtask:hover{background:var(--sage-ll)}
+.subtask.done{opacity:.5}
+.subtask.done .st-lbl{text-decoration:line-through;color:var(--ink3)}
+.st-chk{width:14px;height:14px;border-radius:4px;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.56rem;transition:all .15s}
+.subtask.done .st-chk{background:var(--sage);border-color:var(--sage);color:white}
+.st-lbl{font-size:.79rem}
+.badge{font-size:.6rem;padding:2px 7px;border-radius:7px;flex-shrink:0}
+.b-d{background:var(--terra-ll);color:var(--terra)}
+.b-w{background:var(--sage-ll);color:var(--sage)}
+.b-a{background:var(--lav-ll);color:var(--lav)}
+.b-promo{background:var(--gold-ll);color:var(--gold)}
+
+/* ── PLAIN TASK ── */
+.task{display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--surface);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);cursor:pointer;transition:all .15s;user-select:none}
+.task:hover{border-color:var(--sage-l);background:var(--sage-ll)}
+.task.done{opacity:.45}
+.task.done .task-lbl{text-decoration:line-through;color:var(--ink3)}
+.tchk{width:17px;height:17px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s}
+.task.done .tchk{background:var(--sage);border-color:var(--sage);color:white}
+.task-lbl{font-size:.82rem;flex:1}
+
+/* ── DAILY RHYTHM ROWS ── */
+.dr-section{margin-bottom:12px}
+.dr-label{font-size:.59rem;text-transform:uppercase;letter-spacing:.14em;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-block;margin-bottom:6px}
+.dr-l-am{background:#E8F4F0;color:#2A7A6A}
+.dr-l-d3{background:#FBF0E8;color:#B86A4A}
+.dr-l-en{background:#F0EBF8;color:#7A6AA0}
+.dr-l-sc{background:#F5E8F5;color:#9A5A9A}
+.dr-l-tx{background:#E8EEF5;color:#4A6A9A}
+.dr-l-lf{background:#FBF8E8;color:#9A8A30}
+.dr-l-cf{background:#E8F5EC;color:#3A8A5A}
+.dr-l-wd{background:#F5EBE8;color:#8A4A3A}
+.dr-row{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all .15s;user-select:none}
+.dr-row:hover{border-color:var(--sage-l);background:var(--sage-ll)}
+.dr-row.done{opacity:.45}
+.dr-row.done .dr-row-text{text-decoration:line-through;color:var(--ink3)}
+.dr-chk{width:14px;height:14px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.53rem;transition:all .15s}
+.dr-row.done .dr-chk{background:var(--sage);border-color:var(--sage);color:white}
+.dr-row-text{font-size:.78rem}
+
+/* ── RHYTHM ITEMS ── */
+.rhythm-item{display:flex;align-items:flex-start;gap:9px;padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:5px}
+.r-num{font-family:'Lora',serif;font-size:1rem;color:var(--sage-l);line-height:1.2;flex-shrink:0;min-width:14px;text-align:right}
+.r-text{font-size:.81rem;color:var(--ink);line-height:1.3}
+.r-sub{font-size:.7rem;color:var(--ink3);margin-top:2px}
+
+/* ── SELF CARE PILLS ── */
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sc-pill{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--surface);border-radius:9px;border:1px solid var(--border);font-size:.79rem;cursor:pointer;transition:all .15s;user-select:none}
+.sc-pill:hover{border-color:var(--rose)}
+.sc-pill.done{background:var(--rose-ll);border-color:var(--rose);opacity:.7}
+.sc-pill.done span{text-decoration:line-through;color:var(--ink3)}
+.sc-dot{width:7px;height:7px;border-radius:50%;border:2px solid var(--rose);flex-shrink:0;transition:all .15s}
+.sc-pill.done .sc-dot{background:var(--rose)}
+
+/* ── HH ── */
+.hh{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;background:var(--surface);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.hh:hover{border-color:var(--sage-l)}
+.hh.done{opacity:.4}
+.hh.done .hh-lbl{text-decoration:line-through;color:var(--ink3)}
+.hh-chk{width:17px;height:17px;border-radius:50%;border:2px solid var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s;margin-top:1px}
+.hh.done .hh-chk{background:var(--sage);border-color:var(--sage);color:white}
+.hh-lbl{font-size:.8rem;flex:1;line-height:1.3}
+.hh-sub{font-size:.67rem;color:var(--ink3);margin-top:2px}
+.hh-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prog-bg{background:var(--sage-l);border-radius:3px;height:4px;overflow:hidden;margin-bottom:9px}
+.prog-fill{height:100%;background:var(--sage);border-radius:3px;transition:width .5s ease}
+.done-ct{font-size:.66rem;color:var(--sage);font-weight:500;padding:2px 7px;background:var(--sage-ll);border-radius:7px}
+
+/* ── MONTHLY TASKS (image style) ── */
+.month-task{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all .15s;margin-bottom:6px;user-select:none}
+.month-task:hover{border-color:var(--gold-l)}
+.month-task.done{opacity:.42}
+.month-task.done .mt-lbl{text-decoration:line-through;color:var(--ink3)}
+.mt-chk{width:17px;height:17px;border-radius:4px;border:2px solid var(--gold-l);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.63rem;transition:all .15s;margin-top:1px}
+.month-task.done .mt-chk{background:var(--gold);border-color:var(--gold);color:white}
+.mt-lbl{font-size:.82rem;flex:1;line-height:1.3}
+.mt-sub{font-size:.68rem;color:var(--ink3);margin-top:2px}
+.month-cat{font-size:.61rem;padding:2px 7px;border-radius:7px;flex-shrink:0;white-space:nowrap}
+.mc-rel{background:var(--terra-ll);color:var(--terra)}
+.mc-hm{background:var(--sage-ll);color:var(--sage)}
+.mc-fam{background:var(--sky-ll);color:var(--sky)}
+.mc-adm{background:var(--lav-ll);color:var(--lav)}
+.month-prog-bg{background:var(--gold-l);border-radius:3px;height:4px;overflow:hidden;margin-bottom:8px}
+.month-prog-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .5s}
+
+/* ── REFLECTION ── */
+.refl-split{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.refl-block{border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.refl-block.past{background:var(--terra-ll);border:1px solid rgba(184,106,74,.15)}
+.refl-block.next{background:var(--sage-ll);border:1px solid rgba(107,143,113,.15)}
+.refl-block.pri{background:var(--gold-ll);border:1px solid rgba(192,154,80,.15)}
+.refl-block.backlog-blk{background:var(--surface2);border:1px solid var(--border)}
+.rbt{font-size:.59rem;text-transform:uppercase;letter-spacing:.13em;font-weight:600;margin-bottom:8px}
+.rb-t{color:var(--terra)}.rb-s{color:var(--sage)}.rb-g{color:var(--gold)}.rb-i{color:var(--ink3)}
+.refl-q{margin-bottom:9px}.refl-q:last-child{margin-bottom:0}
+.refl-q label{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);font-weight:600;margin-bottom:3px}
+.pri-row{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--surface);border-radius:9px;border:1px solid var(--border);margin-bottom:5px}
+.pri-status{font-size:.87rem;cursor:pointer;flex-shrink:0;line-height:1}
+.pri-area{font-size:.66rem;color:var(--ink3);white-space:nowrap}
+.backlog-item{padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:5px;font-size:.78rem;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.rtab{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:.72rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif}
+.rtab.active{background:var(--terra);color:white;border-color:var(--terra)}
+.archive-entry{background:var(--surface);border-radius:11px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px}
+
+/* ── HABITS ── */
+.habit-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:15px;margin-bottom:9px}
+.habit-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.habit-row:last-child{border-bottom:none}
+.habit-name{font-size:.8rem;flex:1;min-width:100px;outline:none}
+.habit-dots{display:flex;gap:4px}
+.hdl{width:19px;text-align:center;font-size:.57rem;color:var(--ink3);letter-spacing:.03em}
+.h-dot{width:19px;height:19px;border-radius:50%;border:2px solid var(--border);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:.58rem;flex-shrink:0}
+.h-dot:hover{border-color:var(--sage)}
+.h-dot.on{background:var(--sage);border-color:var(--sage);color:white}
+.h-dot.on::after{content:'•';color:white}
+.habit-streak{font-size:.66rem;color:var(--gold);font-weight:500;margin-left:auto;white-space:nowrap}
+
+/* ── READING/LISTENING ── */
+.media-item{background:var(--surface);border-radius:11px;border:1px solid var(--border);padding:12px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:11px}
+.media-emoji{font-size:1.3rem;flex-shrink:0;margin-top:1px}
+.media-title{font-size:.84rem;font-weight:500;margin-bottom:2px}
+.media-author{font-size:.73rem;color:var(--ink3)}
+.media-status{font-size:.65rem;padding:2px 8px;border-radius:10px;margin-top:4px;display:inline-block}
+.ms-reading{background:var(--sage-ll);color:var(--sage)}
+.ms-listening{background:var(--lav-ll);color:var(--lav)}
+
+/* ── REWARD GRID ── */
+.reward-section-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:500;color:var(--ink);margin-bottom:5px}
+.reward-sub{font-size:.75rem;color:var(--ink3);margin-bottom:12px;line-height:1.4}
+.reward-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.reward-tile{background:var(--surface2);border-radius:10px;padding:11px 9px;text-align:center;font-size:.75rem;font-weight:500;color:var(--ink);cursor:pointer;transition:all .2s;border:2px solid transparent;line-height:1.35;user-select:none}
+.reward-tile:hover{background:var(--gold-ll);border-color:var(--gold-l);color:var(--gold)}
+.reward-tile.picked{background:var(--gold-ll);border-color:var(--gold);color:var(--gold);transform:scale(1.03)}
+.make-fun-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.fun-tile{background:var(--lav-ll);border-radius:10px;padding:11px 9px;text-align:center;font-size:.75rem;font-weight:500;color:var(--lav);cursor:pointer;transition:all .2s;border:2px solid transparent;line-height:1.35;user-select:none}
+.fun-tile:hover{background:var(--lav);color:white}
+.fun-tile.picked{background:var(--lav);color:white;transform:scale(1.03)}
+
+/* ── CALENDAR VIEW ── */
+.cal-month-block{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:15px;margin-bottom:11px}
+.cal-month-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-month-name{font-family:'Lora',serif;font-size:1rem;font-weight:500}
+.cal-month-pct{font-size:.72rem;color:var(--gold);font-weight:600;padding:3px 9px;background:var(--gold-ll);border-radius:10px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px}
+.cal-day-label{font-size:.58rem;text-align:center;color:var(--ink3);font-weight:600;letter-spacing:.04em;padding:2px 0}
+.cal-day{height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;cursor:pointer;transition:all .2s;position:relative;user-select:none}
+.cal-day.empty{background:transparent;cursor:default}
+.cal-day.normal{background:var(--surface2);color:var(--ink2)}
+.cal-day.normal:hover{background:var(--sage-ll);color:var(--sage)}
+.cal-day.done-day{background:var(--sage-ll);color:var(--sage-d);font-weight:600}
+.cal-day.partial-day{background:var(--gold-ll);color:var(--gold)}
+.cal-day.today-day{background:var(--terra);color:white;font-weight:600;box-shadow:0 2px 8px rgba(184,106,74,.35)}
+.cal-day.future-day{background:transparent;color:var(--ink3);border:1px dashed var(--border)}
+.cal-week-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:10px}
+.cal-week-col{background:var(--surface2);border-radius:6px;padding:5px 3px;text-align:center}
+.cal-week-col-label{font-size:.58rem;color:var(--ink3);margin-bottom:3px}
+.cal-week-pct-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:3px}
+.cal-week-pct-fill{height:100%;border-radius:2px;transition:width .5s}
+.cal-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:.67rem;color:var(--ink3)}
+.cal-legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── MEALS ── */
+.meal-day{display:flex;align-items:center;gap:8px;padding:7px 11px;background:var(--surface);border-radius:9px;border:1px solid var(--border);margin-bottom:5px}
+.meal-lbl{font-size:.69rem;font-weight:600;color:var(--ink3);min-width:28px;text-transform:uppercase}
+.meal-name{font-size:.81rem;flex:1;outline:none}
+.meal-name:focus{color:var(--terra)}
+.ai-box{background:var(--gold-ll);border:1px solid var(--gold-l);border-radius:12px;padding:12px 14px;margin-top:9px;display:none}
+.ai-box.show{display:block}
+.ai-meal{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:.81rem;cursor:pointer}
+.ai-meal:last-child{border-bottom:none}
+.ai-meal:hover{color:var(--terra)}
+
+/* ── DECL ── */
+.decl{background:var(--terra-ll);border-left:3px solid var(--terra);border-radius:0 var(--radius) var(--radius) 0;padding:13px 17px;margin-bottom:14px}
+.decl-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.14em;color:var(--terra);font-weight:600;margin-bottom:4px}
+.decl-text{font-family:'Lora',serif;font-size:.88rem;line-height:1.65;font-style:italic;color:var(--ink)}
+
+/* ── MANTRAS ── */
+.mantra{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;background:var(--surface);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)}
+.m-num{font-family:'Lora',serif;font-size:1.2rem;color:var(--sage-l);line-height:1;min-width:15px}
+.m-text{font-family:'Lora',serif;font-size:.85rem;font-style:italic;line-height:1.5}
+
+/* ── SEASONS ── */
+.sc-card{border-radius:var(--radius);padding:13px;color:white;margin-bottom:7px}
+.scc-spring{background:linear-gradient(135deg,var(--sage),var(--sage-d))}
+.scc-summer{background:linear-gradient(135deg,var(--terra),#D4855A)}
+.scc-fall{background:linear-gradient(135deg,#A07840,var(--gold))}
+.scc-winter{background:linear-gradient(135deg,var(--sky),#3A6F8F)}
+.sc-name{font-size:.59rem;text-transform:uppercase;letter-spacing:.12em;opacity:.8;margin-bottom:2px}
+.sc-theme{font-family:'Lora',serif;font-size:.9rem;font-weight:400}
+.sc-notes{font-size:.73rem;opacity:.8;margin-top:4px;line-height:1.35}
+
+/* ── VALUES ── */
+.val-chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+.val-chip{padding:7px 14px;border-radius:20px;font-family:'Lora',serif;font-size:.87rem;font-style:italic;font-weight:500}
+.vc-sage{background:var(--sage);color:white}
+.vc-terra{background:var(--terra);color:white}
+.vc-sky{background:var(--sky);color:white}
+.vc-gold{background:var(--gold);color:white}
+
+/* ── AREA CARDS ── */
+.area-card{background:var(--surface);border-radius:var(--radius);padding:13px;border:1px solid var(--border)}
+.area-icon{font-size:1.1rem;margin-bottom:5px}
+.area-name{font-family:'Lora',serif;font-size:.9rem;font-weight:500;margin-bottom:2px}
+.area-desc{font-size:.74rem;color:var(--ink2);line-height:1.5}
+
+/* ── GDRIVE ── */
+.gdrive-link{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--sky-ll);border:1px solid rgba(90,143,175,.25);border-radius:11px;margin-bottom:6px;text-decoration:none;color:var(--ink);font-size:.8rem;transition:all .2s}
+.gdrive-link:hover{background:rgba(90,143,175,.15);border-color:var(--sky)}
+
+/* ── LOG ── */
+.log-item{display:flex;align-items:flex-start;gap:7px;padding:7px 10px;background:var(--surface);border-radius:9px;border:1px solid var(--border);margin-bottom:5px;font-size:.79rem;animation:fadeUp .18s ease}
+.log-time{font-size:.64rem;color:var(--ink3);min-width:38px;margin-top:1px}
+.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.ld-sage{background:var(--sage)}.ld-terra{background:var(--terra)}.ld-gold{background:var(--gold)}.ld-lav{background:var(--lav)}.ld-sky{background:var(--sky)}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sage-l);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav">
+  <div class="brand"><div class="brand-dot"></div>my life os</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('today',this)">Today</button>
+    <button class="ntab" onclick="showPage('week',this)">Week</button>
+    <button class="ntab" onclick="showPage('meals',this)">Meals</button>
+    <button class="ntab" onclick="showPage('capture',this)">Capture</button>
+    <button class="ntab" onclick="showPage('reflect',this)">Reflect</button>
+    <button class="ntab" onclick="showPage('monthly',this)">Monthly</button>
+    <button class="ntab" onclick="showPage('habits',this)">Habits</button>
+    <button class="ntab" onclick="showPage('reading',this)">Reading</button>
+    <button class="ntab" onclick="showPage('rewards',this)">Rewards</button>
+    <button class="ntab" onclick="showPage('calendar',this)">Calendar</button>
+    <button class="ntab" onclick="showPage('resources',this)">Resources</button>
+    <button class="ntab" onclick="showPage('year',this)">Year</button>
+    <button class="ntab" onclick="showPage('log',this)">Log</button>
+  </div>
+  <div class="nav-right">
+    <a class="gcal-nav-btn" href="https://calendar.google.com" target="_blank">📅 Cal</a>
+    <button class="mode-badge weekday" id="mode-toggle" onclick="toggleMode()">Weekday</button>
+  </div>
+</nav>
+
+
+<!-- ══════════ TODAY ══════════ -->
+<div id="page-today" class="page active">
+
+  <!-- DINNER PIN -->
+  <div class="dinner-pin" id="dinner-pin">
+    <div style="flex-shrink:0">
+      <div class="dinner-pin-label">Tonight's dinner</div>
+      <div class="dinner-pin-name" id="dinner-display">Not set yet</div>
+    </div>
+    <input class="dinner-pin-input" id="dinner-input" placeholder="What's for dinner tonight?" style="display:none" onkeydown="if(event.key==='Enter')saveDinner()"/>
+    <button class="dinner-edit-btn" id="dinner-btn" onclick="toggleDinnerEdit()">✎ Set dinner</button>
+  </div>
+
+  <div class="hero h-sage" id="today-hero">
+    <div class="hero-ey" id="today-date-lbl">Tuesday · March 17</div>
+    <div class="hero-title" id="today-greeting">Good morning.</div>
+    <div class="hero-sub">One thing at a time. Small steps count.</div>
+  </div>
+  <div class="hero h-weekend" id="weekend-hero" style="display:none">
+    <div class="hero-ey">Weekend · Sabbath Mode</div>
+    <div class="hero-title" style="font-family:'Lora',serif;font-weight:400">Rest is productive.</div>
+    <div class="hero-sub">Bare minimums only. Be present with your people.</div>
+  </div>
+
+  <div id="weekday-block">
+    <!-- ENERGY -->
+    <p class="sec">How are you today?</p>
+    <div style="display:flex;gap:6px;margin-bottom:13px">
+      <button class="btn btn-sm ae" id="e-full" onclick="setEnergy('full')" style="flex:1;border-radius:10px;border:2px solid var(--sage);background:var(--sage-ll);color:var(--sage)">⚡ Full energy</button>
+      <button class="btn btn-sm" id="e-low" onclick="setEnergy('low')" style="flex:1;border-radius:10px;border:2px solid var(--border);background:var(--surface);color:var(--ink3)">🌿 Low energy</button>
+      <button class="btn btn-sm" id="e-rest" onclick="setEnergy('rest')" style="flex:1;border-radius:10px;border:2px solid var(--border);background:var(--surface);color:var(--ink3)">💛 Rest day</button>
+    </div>
+    <div style="border-radius:12px;padding:12px 15px;margin-bottom:12px;display:none" id="rest-card">
+      <div style="font-size:1.4rem;margin-bottom:5px">💛</div>
+      <div style="font-family:'Lora',serif;font-size:.97rem;font-style:italic;color:var(--lav);margin-bottom:4px">Today is a rest day, and that's okay.</div>
+      <p style="font-size:.77rem;color:var(--ink2);line-height:1.5">Walk if you can. Feed everyone. That's enough.</p>
+    </div>
+    <div style="border-radius:12px;padding:11px 14px;margin-bottom:12px;display:none;background:var(--gold-ll);border:1px solid var(--gold-l)" id="low-note">
+      <div style="font-family:'Lora',serif;font-style:italic;font-size:.87rem;color:var(--gold);margin-bottom:3px">Low energy mode — floor, not ceiling.</div>
+      <p style="font-size:.77rem;color:var(--ink2);line-height:1.5">Only bare minimums today. Everything else will still be here tomorrow.</p>
+    </div>
+
+    <!-- DAILY TASK PROGRESS -->
+    <p class="sec">Daily tasks</p>
+    <div class="task-progress-bar">
+      <span class="tp-label">Today</span>
+      <div class="tp-track"><div class="tp-fill" id="tp-fill" style="width:0%"></div></div>
+      <span class="tp-count" id="tp-count">0 / 4</span>
+      <div class="tp-dots">
+        <div class="tp-dot" id="tpd-0" title="Laundry"></div>
+        <div class="tp-dot" id="tpd-1" title="Dishes"></div>
+        <div class="tp-dot" id="tpd-2" title="Counters"></div>
+        <div class="tp-dot" id="tpd-3" title="Dinner"></div>
+      </div>
+    </div>
+
+    <!-- TASK GROUPS -->
+    <div class="task-group" id="tg-laundry">
+      <div class="task-header" onclick="toggleGroup('tg-laundry')">
+        <div class="tg-check" id="tgc-laundry"></div><span class="tg-label">🧺 Laundry cycle</span>
+        <span class="tg-prog" id="tgp-laundry">0/3</span><span class="tg-tog" id="tgt-laundry">▶</span><span class="badge b-d">Daily</span>
+      </div>
+      <div class="subtasks" id="sts-laundry">
+        <div class="subtask" onclick="toggleSub(this,'laundry',0)"><div class="st-chk"></div><span class="st-lbl">Sort dry laundry from last load</span></div>
+        <div class="subtask" onclick="toggleSub(this,'laundry',1)"><div class="st-chk"></div><span class="st-lbl">Start a new load in the washer</span></div>
+        <div class="subtask" onclick="toggleSub(this,'laundry',2)"><div class="st-chk"></div><span class="st-lbl">Move washer load to dryer</span></div>
+      </div>
+    </div>
+    <div class="task-group" id="tg-dishes">
+      <div class="task-header" onclick="toggleGroup('tg-dishes')">
+        <div class="tg-check" id="tgc-dishes"></div><span class="tg-label">🍽 Dishes cycle</span>
+        <span class="tg-prog" id="tgp-dishes">0/2</span><span class="tg-tog" id="tgt-dishes">▶</span><span class="badge b-d">Daily</span>
+      </div>
+      <div class="subtasks" id="sts-dishes">
+        <div class="subtask" onclick="toggleSub(this,'dishes',0)"><div class="st-chk"></div><span class="st-lbl">Unload clean dishwasher</span></div>
+        <div class="subtask" onclick="toggleSub(this,'dishes',1)"><div class="st-chk"></div><span class="st-lbl">Load dirty dishes (at least once today)</span></div>
+      </div>
+    </div>
+    <div class="task-group" id="tg-counters">
+      <div class="task-header" onclick="toggleGroup('tg-counters')">
+        <div class="tg-check" id="tgc-counters"></div><span class="tg-label">✨ Wipe counters</span>
+        <span class="tg-prog" id="tgp-counters">0/3</span><span class="tg-tog" id="tgt-counters">▶</span><span class="badge b-d">Daily</span>
+      </div>
+      <div class="subtasks" id="sts-counters">
+        <div class="subtask" onclick="toggleSub(this,'counters',0)"><div class="st-chk"></div><span class="st-lbl">Clear counters & table</span></div>
+        <div class="subtask" onclick="toggleSub(this,'counters',1)"><div class="st-chk"></div><span class="st-lbl">Toss loose items into chuck-it buckets</span></div>
+        <div class="subtask" onclick="toggleSub(this,'counters',2)"><div class="st-chk"></div><span class="st-lbl">Wipe down surfaces</span></div>
+      </div>
+    </div>
+    <div class="task-group" id="tg-dinner">
+      <div class="task-header" onclick="toggleGroup('tg-dinner')">
+        <div class="tg-check" id="tgc-dinner"></div><span class="tg-label">🍳 Decide dinner by noon</span>
+        <span class="tg-prog" id="tgp-dinner">0/2</span><span class="tg-tog" id="tgt-dinner">▶</span><span class="badge b-d">Daily</span>
+      </div>
+      <div class="subtasks" id="sts-dinner">
+        <div class="subtask" onclick="toggleSub(this,'dinner',0)"><div class="st-chk"></div><span class="st-lbl">Check meal plan → confirm or swap</span></div>
+        <div class="subtask" onclick="toggleSub(this,'dinner',1)"><div class="st-chk"></div><span class="st-lbl">Note what to thaw / prep</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DAILY RHYTHM (full width) -->
+    <p class="sec">Daily rhythm</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+      <div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-am">AM Routine</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Up at 6:30 AM</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Bible recap / devotional (YouVersion)</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Make breakfast + pack/prep lunch</span></div>
+        </div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-d3">Daily 3</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Laundry cycle</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Dishes + wipe surfaces</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Finalize dinner by noon</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-en">Energizing</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Read physical book for 10 min</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Journal prompt w/ 10 min timer</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">1 extra or phone call</span></div>
+        </div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-tx">Taxing Tasks</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">2 weekly tasks</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">1 monthly task</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">1 extra or phone call</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-lf">Light + Fun</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Afternoon coffee or fun drink</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Listen to music</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Pinterest scroll with a timer</span></div>
+        </div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-cf">Care for Them</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Play with each child 1:1 — phone free</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Intentional daily movement</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Daily reading (bedtime or otherwise)</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="dr-section">
+          <div class="dr-label dr-l-wd">Wind Down</div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Phone bricked at 9pm</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Skincare + teeth</span></div>
+          <div class="dr-row" onclick="toggleDR(this)"><div class="dr-chk"></div><span class="dr-row-text">Prayer time</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OPENING + CLOSING (2 col) -->
+    <div class="g2" style="align-items:start;gap:14px;margin-bottom:14px">
+      <div>
+        <p class="sec">🌅 Opening rhythm</p>
+        <p style="font-size:.71rem;color:var(--ink3);margin-bottom:8px;font-style:italic">A gentle order — not a checklist.</p>
+        <div class="rhythm-item"><span class="r-num">1</span><div><div class="r-text">Get yourself ready first</div><div class="r-sub">Coffee, dressed, moment before the house wakes</div></div></div>
+        <div class="rhythm-item"><span class="r-num">2</span><div><div class="r-text">Kids up & morning needs met</div><div class="r-sub">Breakfast, dressed, bags packed</div></div></div>
+        <div class="rhythm-item"><span class="r-num">3</span><div><div class="r-text">Quick kitchen pass</div><div class="r-sub">Start dishwasher unload, wipe if time</div></div></div>
+        <div class="rhythm-item"><span class="r-num">4</span><div><div class="r-text">Check today's plan</div><div class="r-sub">Open Life OS — what needs doing?</div></div></div>
+      </div>
+      <div>
+        <p class="sec">🌙 Closing rhythm</p>
+        <p style="font-size:.71rem;color:var(--ink3);margin-bottom:8px;font-style:italic">End the day with intention.</p>
+        <div class="rhythm-item"><span class="r-num">1</span><div><div class="r-text">Kitchen reset</div><div class="r-sub">Load dishwasher, run it, wipe counters</div></div></div>
+        <div class="rhythm-item"><span class="r-num">2</span><div><div class="r-text">Quick tidy pass</div><div class="r-sub">Chuck-it buckets, couch, anything out of place</div></div></div>
+        <div class="rhythm-item"><span class="r-num">3</span><div><div class="r-text">Kids to bed</div><div class="r-sub">Books, connection, consistent wind-down</div></div></div>
+        <div class="rhythm-item"><span class="r-num">4</span><div><div class="r-text">Phone bricked → your time</div><div class="r-sub">Skincare, reading, prayer — protect this</div></div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SELF CARE + QUICK WINS (2 col) -->
+    <div class="g2" style="align-items:start;gap:14px">
+      <div>
+        <p class="sec">💚 Self care — today</p>
+        <div class="sc-grid">
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Shower + full routine</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Get ready (hair, makeup)</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Daily movement / walk</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>10 min reading</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Journal prompt</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Water intake</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Less phone</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Skincare + teeth</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Prayer time</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Rest / margin</span></div>
+        </div>
+      </div>
+      <div>
+        <p class="sec">⚡ Quick wins — momentum starters</p>
+        <p style="font-size:.71rem;color:var(--ink3);margin-bottom:8px;font-style:italic">When you need a small win to get going.</p>
+        <div class="task" onclick="completeTask(this,'Make bed')"><div class="tchk"></div><span class="task-lbl">Make your bed</span></div>
+        <div class="task" onclick="completeTask(this,'5 min tidy')"><div class="tchk"></div><span class="task-lbl">5 minute tidy blitz</span></div>
+        <div class="task" onclick="completeTask(this,'Glass of water')"><div class="tchk"></div><span class="task-lbl">Glass of water</span></div>
+        <div class="task" onclick="completeTask(this,'Step outside')"><div class="tchk"></div><span class="task-lbl">Step outside for 5 min</span></div>
+        <div class="task" onclick="completeTask(this,'Open curtains')"><div class="tchk"></div><span class="task-lbl">Open all the curtains / blinds</span></div>
+      </div>
+    </div>
+  </div><!-- /weekday-block -->
+
+  <!-- WEEKEND BLOCK -->
+  <div id="weekend-block" style="display:none">
+    <p class="sec">Bare minimums</p>
+    <div class="task" onclick="completeTask(this,'Laundry')"><div class="tchk"></div><span class="task-lbl">🧺 Start a load of laundry</span></div>
+    <div class="task" onclick="completeTask(this,'Dishes')"><div class="tchk"></div><span class="task-lbl">🍽 Run dishwasher</span></div>
+    <div class="task" onclick="completeTask(this,'Counters')"><div class="tchk"></div><span class="task-lbl">✨ Wipe counters</span></div>
+    <div class="divider"></div>
+    <div class="g2" style="align-items:start">
+      <div>
+        <p class="sec">🌤 Weekend rhythm</p>
+        <div class="rhythm-item"><span class="r-num" style="color:var(--gold-l)">AM</span><div><div class="r-text">Slow morning — family breakfast</div></div></div>
+        <div class="rhythm-item"><span class="r-num" style="color:var(--gold-l)">Mid</span><div><div class="r-text">Family activity or outside time</div></div></div>
+        <div class="rhythm-item"><span class="r-num" style="color:var(--terra-l)">PM</span><div><div class="r-text">Rest / connection</div></div></div>
+        <div class="rhythm-item"><span class="r-num" style="color:var(--terra-l)">Eve</span><div><div class="r-text">Sunday reset — Plan Your Life block</div></div></div>
+      </div>
+      <div>
+        <p class="sec">💚 Self care</p>
+        <div class="sc-grid">
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Walk / movement</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Less phone</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Rest</span></div>
+          <div class="sc-pill" onclick="toggleSC(this)"><div class="sc-dot"></div><span>Reading</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="sec mt">Weekend events</p>
+    <div class="row"><input class="inp" id="wknd-ei" placeholder="Add event or activity..." style="flex:1"/><input class="inp" id="wknd-et" placeholder="Time" style="max-width:110px"/><button class="btn btn-terra" onclick="addEvent('wknd-events','wknd-ei','wknd-et')">Add</button></div>
+    <div id="wknd-events"></div>
+  </div>
+</div>
+
+
+<!-- ══════════ WEEK ══════════ -->
+<div id="page-week" class="page">
+  <div class="hero h-terra">
+    <div class="hero-ey" id="week-lbl">Week of March 17 – 23</div>
+    <div class="hero-title">This week.</div>
+    <div class="hero-sub">See everything undone. Grab something. New week = fresh reset.</div>
+  </div>
+  <p class="sec">Daily non-negotiables</p>
+  <div class="g2">
+    <div class="task" onclick="completeTask(this,'Laundry')"><div class="tchk"></div><span class="task-lbl">🧺 Laundry cycle</span><span class="badge b-d">Daily</span></div>
+    <div class="task" onclick="completeTask(this,'Dishes')"><div class="tchk"></div><span class="task-lbl">🍽 Dishes cycle</span><span class="badge b-d">Daily</span></div>
+    <div class="task" onclick="completeTask(this,'Counters')"><div class="tchk"></div><span class="task-lbl">✨ Wipe counters</span><span class="badge b-d">Daily</span></div>
+    <div class="task" onclick="completeTask(this,'Decide dinner')"><div class="tchk"></div><span class="task-lbl">🍳 Decide dinner by noon</span><span class="badge b-d">Daily</span></div>
+  </div>
+  <div class="flex-c mt" style="margin-top:2px;margin-bottom:7px">
+    <p class="sec" style="margin:0">Weekly tasks</p>
+    <div class="done-ct ml-auto" id="week-done-ct">0 / 15 done</div>
+    <button class="btn btn-ghost btn-sm" onclick="resetWeek()" style="margin-left:6px">↺ Reset</button>
+  </div>
+  <div style="font-size:.7rem;color:var(--ink2);margin-bottom:8px;padding:7px 10px;background:var(--gold-ll);border-radius:8px;border:1px solid var(--gold-l)">⏱ <strong style="color:var(--gold)">Rule:</strong> If it takes more than 10–20 min, it's a project — not a weekly task. Break it down or move it to Monthly.</div>
+  <div class="prog-bg"><div class="prog-fill" id="week-pf" style="width:0%"></div></div>
+  <div class="hh-grid" id="weekly-tasks">
+    <div class="hh" onclick="toggleHH(this,'Wipe fridge')"><div class="hh-chk"></div><div><div class="hh-lbl">Wipe fridge</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Wipe microwave')"><div class="hh-chk"></div><div><div class="hh-lbl">Wipe microwave</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Swiffer floors')"><div class="hh-chk"></div><div><div class="hh-lbl">Swiffer floors</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Inventory')"><div class="hh-chk"></div><div><div class="hh-lbl">Inventory</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Meal plan')"><div class="hh-chk"></div><div><div class="hh-lbl">Meal plan</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Grocery shop/order')"><div class="hh-chk"></div><div><div class="hh-lbl">Grocery shop / order</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Put away laundry 1')"><div class="hh-chk"></div><div><div class="hh-lbl">Put away laundry 1</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Put away laundry 2')"><div class="hh-chk"></div><div><div class="hh-lbl">Put away laundry 2</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Bathroom 1')"><div class="hh-chk"></div><div><div class="hh-lbl">Bathroom 1</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Bathroom 2')"><div class="hh-chk"></div><div><div class="hh-lbl">Bathroom 2</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Declutter')"><div class="hh-chk"></div><div><div class="hh-lbl">Declutter</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Chuck-it buckets')"><div class="hh-chk"></div><div><div class="hh-lbl">Empty chuck-it buckets</div><div class="hh-sub">Put items back where they belong</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Toy reset')"><div class="hh-chk"></div><div><div class="hh-lbl">Toy reset</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Paper review')"><div class="hh-chk"></div><div><div class="hh-lbl">Paper review</div><div class="hh-sub">Mail, paperwork from the week</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Wash bedding')"><div class="hh-chk"></div><div><div class="hh-lbl">Wash bedding</div><div class="hh-sub">Alternate rooms weekly</div></div></div>
+  </div>
+  <div class="divider"></div>
+  <p class="sec">📋 Mom admin block</p>
+  <p style="font-size:.7rem;color:var(--ink3);margin-bottom:8px">Phone calls, appointments, money, logistics. Pure admin — 10–20 min max each.</p>
+  <div class="hh-grid">
+    <div class="hh" onclick="toggleHH(this,'YNAB check-in')"><div class="hh-chk"></div><div><div class="hh-lbl">YNAB / budgeting check-in</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Pay bills')"><div class="hh-chk"></div><div><div class="hh-lbl">Pay bills / review charges</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Schedule appts')"><div class="hh-chk"></div><div><div class="hh-lbl">Schedule appts / calls</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Insurance / paperwork')"><div class="hh-chk"></div><div><div class="hh-lbl">Insurance / paperwork</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Kids admin')"><div class="hh-chk"></div><div><div class="hh-lbl">Kids admin</div><div class="hh-sub">School forms, health, registrations</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Emails / follow-ups')"><div class="hh-chk"></div><div><div class="hh-lbl">Emails / follow-ups</div></div></div>
+    <div class="hh" onclick="toggleHH(this,'Household supply list')"><div class="hh-chk"></div><div><div class="hh-lbl">Household supply list</div></div></div>
+  </div>
+</div>
+
+
+<!-- ══════════ MEALS ══════════ -->
+<div id="page-meals" class="page">
+  <div class="hero h-gold">
+    <div class="hero-ey">Meal Planning</div>
+    <div class="hero-title">Feed your people.</div>
+    <div class="hero-sub">Inventory → AI suggestions → you decide day-of based on energy.</div>
+  </div>
+  <div class="g2" style="align-items:start">
+    <div>
+      <p class="sec">This week's plan</p>
+      <p style="font-size:.71rem;color:var(--ink3);margin-bottom:8px">Click to edit. Decide day-of based on energy.</p>
+      <div id="meal-plan">
+        <div class="meal-day"><span class="meal-lbl">Mon</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Tue</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Wed</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Thu</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Fri</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Sat</span><span class="meal-name" contenteditable="true">—</span></div>
+        <div class="meal-day"><span class="meal-lbl">Sun</span><span class="meal-name" contenteditable="true">—</span></div>
+      </div>
+      <p class="sec mt" style="margin-top:12px">Low-energy fallbacks</p>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="font-size:.78rem;padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">🥚 Scrambled eggs + toast</div>
+        <div style="font-size:.78rem;padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">🍝 Pasta with jarred sauce</div>
+        <div style="font-size:.78rem;padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">🫘 Bean quesadillas</div>
+        <div style="font-size:.78rem;padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--border)">🍕 Frozen pizza night</div>
+      </div>
+    </div>
+    <div>
+      <p class="sec">Current inventory</p>
+      <textarea class="note" id="inventory-text" rows="9" placeholder="What do you have?&#10;&#10;Proteins: ground beef, chicken...&#10;Grains: pasta, rice...&#10;Produce: onions, broccoli...&#10;Pantry: canned tomatoes, beans...&#10;Frozen: pizza, veggies..."></textarea>
+      <button class="btn btn-terra" style="margin-top:8px;width:100%" onclick="getSuggestions()">✦ Get AI meal suggestions</button>
+      <div id="ai-loading" style="display:none;text-align:center;padding:11px;color:var(--ink3);font-size:.79rem;font-style:italic">Thinking up ideas...</div>
+      <div class="ai-box" id="ai-result"><div style="font-family:'Lora',serif;font-size:.84rem;font-style:italic;color:var(--gold);margin-bottom:7px">Based on what you have:</div><div id="ai-meals"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ CAPTURE ══════════ -->
+<div id="page-capture" class="page">
+  <div class="hero h-lav">
+    <div class="hero-ey">Brain Dump</div>
+    <div class="hero-title">Get it out of your head.</div>
+    <div class="hero-sub">Free-write. Stream of consciousness. No structure required.</div>
+  </div>
+  <p class="sec">Open canvas</p>
+  <p style="font-size:.72rem;color:var(--ink3);margin-bottom:10px;font-style:italic">Just write. Worries, ideas, things you're processing, things you're grateful for, things you want to remember...</p>
+  <textarea class="note" rows="22" placeholder="Whatever is taking up space in your head — write it here."></textarea>
+  <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">
+    <a class="gcal-btn" href="https://drive.google.com" target="_blank">📁 Google Drive</a>
+    <a class="gcal-btn" href="https://tasks.google.com" target="_blank">✓ Google Tasks</a>
+  </div>
+</div>
+
+
+<!-- ══════════ REFLECT ══════════ -->
+<div id="page-reflect" class="page">
+  <div class="hero h-rose">
+    <div class="hero-ey">Plan Your Life · Weekly Reflection</div>
+    <div class="hero-title">Look back. Plan forward.</div>
+    <div class="hero-sub">Your Mom Admin Block. Do this weekly — Sunday evening or Monday morning.</div>
+  </div>
+
+  <div style="background:var(--lav-ll);border:1px solid var(--lav-l);border-radius:12px;padding:12px 15px;margin-bottom:15px;font-size:.8rem;color:var(--ink2);line-height:1.7">
+    <strong style="color:var(--lav)">How to use this block:</strong>&nbsp;
+    <span style="color:var(--lav)">①</span> Complete past week below &nbsp;
+    <span style="color:var(--lav)">②</span> Set next week's priorities &nbsp;
+    <span style="color:var(--lav)">③</span> Note what needs a date &nbsp;
+    <span style="color:var(--lav)">④</span> Review backlog &nbsp;
+    <span style="color:var(--lav)">⑤</span> Check Monthly tab for anything upcoming
+  </div>
+
+  <div style="display:flex;gap:5px;margin-bottom:14px">
+    <button class="rtab active" onclick="showReflTab('current',this)">This week</button>
+    <button class="rtab" onclick="showReflTab('archive',this)">Archive</button>
+  </div>
+  <div id="refl-current">
+    <div class="refl-split">
+      <div>
+        <div style="font-family:'Lora',serif;font-size:.95rem;font-weight:500;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--border)">This Past Week</div>
+        <div class="refl-block past">
+          <div class="rbt rb-t">What happened</div>
+          <div class="refl-q"><label>What went well?</label><textarea class="note" rows="2" placeholder="Even small wins count..."></textarea></div>
+          <div class="refl-q"><label>Where did I show up?</label><textarea class="note" rows="2" placeholder="Present, intentional, consistent?"></textarea></div>
+          <div class="refl-q"><label>What felt life-giving?</label><textarea class="note" rows="2" placeholder="What gave you energy?"></textarea></div>
+          <div class="refl-q" style="margin-bottom:0"><label>What drained me?</label><textarea class="note" rows="2" placeholder="What cost you the most?"></textarea></div>
+        </div>
+        <div class="refl-block pri">
+          <div class="rbt rb-g">Last week's priorities — how'd it go?</div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="Relationship priority..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Relationship</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="Family / outside..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Family</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="Health / home..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Health/Home</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="Working on (habit)..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area" style="color:var(--lav)">Working on</span></div>
+          <div class="pri-row" style="border-style:dashed"><span class="pri-status">⭐</span><div style="flex:1"><input class="inp" placeholder="Extra credit..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Bonus</span></div>
+        </div>
+        <div class="refl-block backlog-blk">
+          <div class="rbt rb-i">⏱ Backlog</div>
+          <div id="backlog-list">
+            <div class="backlog-item"><span>⏱</span><span style="flex:1">Sleeping arrangements — revisit after taxes</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button></div>
+            <div class="backlog-item"><span>⏱</span><span style="flex:1">BRICK schedule review</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button></div>
+          </div>
+          <div class="row" style="margin-top:6px"><input class="inp" id="backlog-input" placeholder="Add to backlog..." style="flex:1" onkeydown="if(event.key==='Enter')addBacklog()"/><button class="btn btn-ghost btn-sm" onclick="addBacklog()">Add</button></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Lora',serif;font-size:.95rem;font-weight:500;margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--border)">This Next Week</div>
+        <div class="refl-block next">
+          <div class="rbt rb-s">Looking ahead</div>
+          <div class="refl-q"><label>What events or milestones are coming up?</label><textarea class="note" rows="2" placeholder="Appointments, birthdays, school events..."></textarea></div>
+          <div class="refl-q"><label>What needs a date now?</label><textarea class="note" rows="2" placeholder="What needs to get on the calendar?"></textarea></div>
+          <div class="refl-q" style="margin-bottom:0"><label>What seasonal or family activities do I want to include?</label><textarea class="note" rows="2" placeholder="Connection, traditions, outside time..."></textarea></div>
+        </div>
+        <div class="refl-block pri">
+          <div class="rbt rb-g">Next week's three priorities</div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="1 relationship priority..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Relationship</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="1 family / outside..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Family</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="1 health / home..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Health/Home</span></div>
+          <div class="pri-row"><span class="pri-status" onclick="cyclePri(this)">⬜</span><div style="flex:1"><input class="inp" placeholder="Working on..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area" style="color:var(--lav)">Working on</span></div>
+          <div class="pri-row" style="border-style:dashed"><span class="pri-status">⭐</span><div style="flex:1"><input class="inp" placeholder="Extra credit..." style="border:none;background:transparent;padding:0;font-size:.81rem;outline:none"/></div><span class="pri-area">Bonus</span></div>
+        </div>
+        <div class="card"><div style="font-family:'Lora',serif;font-size:.88rem;font-weight:500;margin-bottom:7px">📝 Notes & intentions</div><textarea class="note" rows="4" placeholder="Anything on your heart as you plan the week ahead..."></textarea></div>
+        <button class="btn btn-sage" style="width:100%;margin-top:3px" onclick="saveReflection()">✓ Save this reflection</button>
+      </div>
+    </div>
+  </div>
+  <div id="refl-archive" style="display:none">
+    <p style="font-size:.78rem;color:var(--ink3);margin-bottom:12px;font-style:italic">Your saved reflections. Scroll back to see how far you've come.</p>
+    <div id="archive-list"><div style="text-align:center;padding:26px;color:var(--ink3);font-size:.82rem;font-style:italic">No saved reflections yet.</div></div>
+  </div>
+</div>
+
+
+<!-- ══════════ MONTHLY ══════════ -->
+<div id="page-monthly" class="page">
+  <div class="hero h-gold">
+    <div class="hero-ey">Monthly</div>
+    <div class="hero-title">The bigger picture.</div>
+    <div class="hero-sub">Your monthly task menu. Grab 1–2 per week during your taxing tasks block.</div>
+  </div>
+  <div class="flex-c" style="margin-bottom:7px">
+    <p class="sec" style="margin:0">March 2026</p>
+    <div class="done-ct ml-auto" id="month-done-ct">0 done</div>
+    <button class="btn btn-ghost btn-sm" onclick="resetMonth()" style="margin-left:6px">↺ Reset</button>
+  </div>
+  <div class="month-prog-bg"><div class="month-prog-fill" id="month-pf" style="width:0%"></div></div>
+
+  <div class="g2" style="align-items:start;gap:12px">
+    <div>
+      <p class="sec">🏠 Home & Admin</p>
+      <div id="monthly-home">
+        <div class="month-task" onclick="toggleMonthTask(this,'Budget update')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Budget update</div></div><span class="month-cat mc-adm">Admin</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Clean out mail folder')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Clean out mail folder</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'House inventory')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">House inventory</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Wash throws + stuffies')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Wash throws + stuffies</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Clean out fridge')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Clean out fridge</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Wash + vacuum car')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Wash + vacuum car</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Clean out purse + gym bag')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Clean out purse + gym bag</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Ironing')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Ironing</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Home project')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Home project</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Yard work')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Yard work</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Med refills check')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Med refills check</div></div><span class="month-cat mc-adm">Admin</span></div>
+      </div>
+    </div>
+    <div>
+      <p class="sec">👨‍👩‍👧 Family & Connection</p>
+      <div id="monthly-family">
+        <div class="month-task" onclick="toggleMonthTask(this,'Return library books')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Return library books</div></div><span class="month-cat mc-fam">Family</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Donation drop off')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Donation drop off</div></div><span class="month-cat mc-hm">Home</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Big shop Costco/BJs')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Big shop at Costco / BJs</div></div><span class="month-cat mc-adm">Admin</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Plan meals for the month')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Plan meals for the month</div></div><span class="month-cat mc-fam">Family</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Haircuts for kids')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Haircuts for kids</div></div><span class="month-cat mc-fam">Family</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Family fun activity')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Family fun activity</div></div><span class="month-cat mc-fam">Family</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Date night')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Date night</div></div><span class="month-cat mc-rel">Connection</span></div>
+        <div class="month-task" onclick="toggleMonthTask(this,'Connect with a friend')"><div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">Connect with a friend</div></div><span class="month-cat mc-rel">Connection</span></div>
+      </div>
+      <div class="row mt" style="margin-top:10px">
+        <input class="inp" id="month-task-input" placeholder="Add a monthly task..." style="flex:1"/>
+        <select class="sel" id="month-task-cat">
+          <option value="mc-fam">Family</option><option value="mc-hm">Home</option>
+          <option value="mc-rel">Connection</option><option value="mc-adm">Admin</option>
+        </select>
+        <button class="btn btn-gold" onclick="addMonthTask()">Add</button>
+      </div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <p class="sec">This month's intention</p>
+  <textarea class="note" rows="2" placeholder="What do you want this month to feel like? What would make it a win?"></textarea>
+</div>
+
+
+<!-- ══════════ HABITS ══════════ -->
+<div id="page-habits" class="page">
+  <div class="hero h-teal">
+    <div class="hero-ey">Habit Tracker — BUJO Inspired</div>
+    <div class="hero-title">Show up. Dot by dot.</div>
+    <div class="hero-sub">One dot per day. No judgment. Just visibility.</div>
+  </div>
+  <div class="habit-card">
+    <div style="display:flex;align-items:center;gap:9px;padding:0 0 7px;margin-bottom:3px;border-bottom:1px solid var(--border)">
+      <div style="flex:1;min-width:100px;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600">Habit</div>
+      <div class="habit-day-labels" style="display:flex;gap:4px">
+        <div class="hdl">M</div><div class="hdl">T</div><div class="hdl">W</div><div class="hdl">T</div><div class="hdl">F</div><div class="hdl">S</div><div class="hdl">S</div>
+      </div>
+      <div style="font-size:.6rem;color:var(--ink3);min-width:48px;text-align:right">Streak</div>
+    </div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">🚶 Walking / movement</div><div class="habit-dots" data-habit="walk"><div class="h-dot" onclick="toggleHabit(this,'walk',0)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',1)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',2)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',3)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',4)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',5)"></div><div class="h-dot" onclick="toggleHabit(this,'walk',6)"></div></div><div class="habit-streak" id="streak-walk">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">📖 Reading</div><div class="habit-dots" data-habit="read"><div class="h-dot" onclick="toggleHabit(this,'read',0)"></div><div class="h-dot" onclick="toggleHabit(this,'read',1)"></div><div class="h-dot" onclick="toggleHabit(this,'read',2)"></div><div class="h-dot" onclick="toggleHabit(this,'read',3)"></div><div class="h-dot" onclick="toggleHabit(this,'read',4)"></div><div class="h-dot" onclick="toggleHabit(this,'read',5)"></div><div class="h-dot" onclick="toggleHabit(this,'read',6)"></div></div><div class="habit-streak" id="streak-read">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">✍️ Journaling</div><div class="habit-dots" data-habit="journal"><div class="h-dot" onclick="toggleHabit(this,'journal',0)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',1)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',2)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',3)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',4)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',5)"></div><div class="h-dot" onclick="toggleHabit(this,'journal',6)"></div></div><div class="habit-streak" id="streak-journal">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">📵 Phone bricked by 9pm</div><div class="habit-dots" data-habit="phone"><div class="h-dot" onclick="toggleHabit(this,'phone',0)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',1)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',2)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',3)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',4)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',5)"></div><div class="h-dot" onclick="toggleHabit(this,'phone',6)"></div></div><div class="habit-streak" id="streak-phone">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">💧 Water intake</div><div class="habit-dots" data-habit="water"><div class="h-dot" onclick="toggleHabit(this,'water',0)"></div><div class="h-dot" onclick="toggleHabit(this,'water',1)"></div><div class="h-dot" onclick="toggleHabit(this,'water',2)"></div><div class="h-dot" onclick="toggleHabit(this,'water',3)"></div><div class="h-dot" onclick="toggleHabit(this,'water',4)"></div><div class="h-dot" onclick="toggleHabit(this,'water',5)"></div><div class="h-dot" onclick="toggleHabit(this,'water',6)"></div></div><div class="habit-streak" id="streak-water">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">🙏 Prayer / devotional</div><div class="habit-dots" data-habit="prayer"><div class="h-dot" onclick="toggleHabit(this,'prayer',0)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',1)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',2)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',3)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',4)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',5)"></div><div class="h-dot" onclick="toggleHabit(this,'prayer',6)"></div></div><div class="habit-streak" id="streak-prayer">—</div></div>
+    <div class="habit-row"><div class="habit-name" contenteditable="true">👶 1:1 time with each kid</div><div class="habit-dots" data-habit="kids"><div class="h-dot" onclick="toggleHabit(this,'kids',0)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',1)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',2)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',3)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',4)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',5)"></div><div class="h-dot" onclick="toggleHabit(this,'kids',6)"></div></div><div class="habit-streak" id="streak-kids">—</div></div>
+  </div>
+  <button class="btn btn-ghost btn-sm" onclick="resetHabits()">↺ Reset week</button>
+</div>
+
+
+<!-- ══════════ READING ══════════ -->
+<div id="page-reading" class="page">
+  <div class="hero h-lav">
+    <div class="hero-ey">What I'm Into</div>
+    <div class="hero-title">Reading & listening.</div>
+    <div class="hero-sub">What's feeding your mind and soul right now. A gentle intention, not a to-do list.</div>
+  </div>
+  <div class="g2" style="align-items:start">
+    <div>
+      <p class="sec">📚 Currently reading</p>
+      <p style="font-size:.71rem;color:var(--ink3);margin-bottom:9px;font-style:italic">What book is open right now?</p>
+      <div id="reading-list">
+        <div class="media-item"><div class="media-emoji">📗</div><div style="flex:1"><div class="media-title">Speaking Life</div><div class="media-author">Slow & intentional — practicing one thought at a time</div><div class="media-status ms-reading">Reading</div></div></div>
+      </div>
+      <div class="row mt" style="margin-top:9px"><input class="inp" id="book-input" placeholder="Title..." style="flex:1"/><input class="inp" id="book-author" placeholder="Notes / pace" style="flex:1"/><button class="btn btn-ghost" onclick="addBook()">Add</button></div>
+    </div>
+    <div>
+      <p class="sec">🎧 If I'm listening to something, this is it</p>
+      <p style="font-size:.71rem;color:var(--ink3);margin-bottom:9px;font-style:italic">Podcasts, audiobooks, albums — whatever's in your ears.</p>
+      <div id="listening-list">
+        <div class="media-item"><div class="media-emoji">🎙</div><div style="flex:1"><div class="media-title">Add what you're listening to</div><div class="media-author">Tap below to add</div><div class="media-status ms-listening">Listening</div></div></div>
+      </div>
+      <div class="row mt" style="margin-top:9px"><input class="inp" id="listen-input" placeholder="Podcast / album / audiobook..." style="flex:1"/><button class="btn btn-ghost" onclick="addListen()">Add</button></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ REWARDS ══════════ -->
+<div id="page-rewards" class="page">
+  <div class="hero h-rose">
+    <div class="hero-ey">Rewards & Making It Fun</div>
+    <div class="hero-title">You earned this.</div>
+    <div class="hero-sub">Tap your reward after a hard push. Tap a fun trick to make boring tasks better.</div>
+  </div>
+
+  <div class="g2" style="align-items:start;gap:16px">
+    <div>
+      <div class="reward-section-title">🏆 Favorite Rewards</div>
+      <div class="reward-sub">Your go-to rewards after pushing through. Tap to pick one — you earned it.</div>
+      <div class="reward-grid">
+        <div class="reward-tile" onclick="pickReward(this)">📖<br>Reading for 10 min</div>
+        <div class="reward-tile" onclick="pickReward(this)">🍫<br>Chocolate treat</div>
+        <div class="reward-tile" onclick="pickReward(this)">🎨<br>Color with my kids</div>
+        <div class="reward-tile" onclick="pickReward(this)">📺<br>YouTube vid on watchlist (15 min)</div>
+        <div class="reward-tile" onclick="pickReward(this)">🚶<br>Go for a walk</div>
+        <div class="reward-tile" onclick="pickReward(this)">📌<br>Pinterest for 10 min</div>
+        <div class="reward-tile" onclick="pickReward(this)">🥨<br>Crunchy snack</div>
+        <div class="reward-tile" onclick="pickReward(this)">🛠<br>Random project for 15 min</div>
+        <div class="reward-tile" onclick="pickReward(this)">🪙<br>Earn a token — save for something big</div>
+      </div>
+      <div id="reward-picked" style="display:none;background:var(--gold-ll);border:1px solid var(--gold-l);border-radius:12px;padding:12px 14px;margin-top:4px">
+        <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:4px">You picked</div>
+        <div id="reward-picked-text" style="font-family:'Lora',serif;font-size:1rem;font-style:italic;color:var(--ink)"></div>
+      </div>
+    </div>
+    <div>
+      <div class="reward-section-title">✨ Make the Boring Fun</div>
+      <div class="reward-sub">When a task feels heavy — try one of these first.</div>
+      <div class="make-fun-grid">
+        <div class="fun-tile" onclick="pickFun(this)">🎵<br>Put on a playlist (Spotify Wrapped)</div>
+        <div class="fun-tile" onclick="pickFun(this)">🎙<br>Listen to a podcast</div>
+        <div class="fun-tile" onclick="pickFun(this)">📸<br>Before + after photo of the task</div>
+        <div class="fun-tile" onclick="pickFun(this)">📹<br>Time lapse video</div>
+        <div class="fun-tile" onclick="pickFun(this)">🏁<br>Gamify it: how fast can I do this?</div>
+        <div class="fun-tile" onclick="pickFun(this)">🤪<br>Opposite hand challenge</div>
+      </div>
+      <div class="divider"></div>
+      <div style="background:var(--rose-ll);border:1px solid rgba(184,122,122,.2);border-radius:12px;padding:13px 15px">
+        <div style="font-family:'Lora',serif;font-size:.95rem;font-weight:500;color:var(--rose);margin-bottom:7px">🪙 Token system</div>
+        <div style="font-size:.79rem;color:var(--ink2);line-height:1.6;margin-bottom:10px">Earn a token every time you push through something hard. Save them for a bigger reward — a solo coffee outing, a book you've been eyeing, a guilt-free rest hour.</div>
+        <div class="flex-c">
+          <div style="font-size:.82rem;color:var(--ink2)">Tokens earned:</div>
+          <div id="token-count" style="font-family:'Lora',serif;font-size:1.3rem;font-weight:500;color:var(--rose);margin:0 8px">0</div>
+          <button class="btn btn-sm" style="background:var(--rose);color:white" onclick="addToken()">+ Earn one</button>
+          <button class="btn btn-ghost btn-sm ml-auto" onclick="spendToken()">− Spend</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ CALENDAR ══════════ -->
+<div id="page-calendar" class="page">
+  <div class="hero h-ink">
+    <div class="hero-ey">At a Glance</div>
+    <div class="hero-title">Your year, visually.</div>
+    <div class="hero-sub">Tap days to mark them. See your completion rhythm at a glance — by week, by month.</div>
+  </div>
+
+  <div id="cal-months-container"></div>
+
+  <div class="cal-legend">
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--terra)"></div>Today</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--sage)"></div>Good day</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--gold)"></div>Partial day</div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--surface2);border:1px solid var(--border)"></div>Future</div>
+  </div>
+
+  <div class="divider"></div>
+  <p class="sec">Weekly completion — this month</p>
+  <div id="weekly-bars"></div>
+</div>
+
+
+<!-- ══════════ RESOURCES ══════════ -->
+<div id="page-resources" class="page">
+  <div class="hero h-sky">
+    <div class="hero-ey">Resources</div>
+    <div class="hero-title">Your reference material.</div>
+    <div class="hero-sub">Folders, tools, quick links, and the philosophy behind your systems.</div>
+  </div>
+  <p class="sec">Quick links</p>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
+    <a class="gcal-btn" href="https://calendar.google.com" target="_blank">📅 Google Calendar</a>
+    <a class="gcal-btn" href="https://tasks.google.com" target="_blank">✓ Google Tasks</a>
+    <a class="gcal-btn" href="https://drive.google.com" target="_blank">📁 Google Drive</a>
+    <a class="gcal-btn" href="https://www.onedayapp.com" target="_blank">📖 OneDay Journal</a>
+    <a class="gcal-btn" href="https://www.youversion.com" target="_blank">🙏 YouVersion</a>
+  </div>
+  <div class="divider"></div>
+  <p class="sec">Google Drive folders</p>
+  <a class="gdrive-link" href="https://drive.google.com" target="_blank"><span>📁</span><span style="flex:1">Open Google Drive</span><span style="color:var(--sky);font-size:.76rem;margin-left:auto">→</span></a>
+  <div id="gdrive-links">
+    <div class="gdrive-link" style="cursor:default"><span>📂</span><span style="flex:1" contenteditable="true">Recipes & Meal Ideas</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer;margin-left:auto" onclick="this.parentElement.remove()">✕</button></div>
+    <div class="gdrive-link" style="cursor:default"><span>📂</span><span style="flex:1" contenteditable="true">Kids Activities & Ideas</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer;margin-left:auto" onclick="this.parentElement.remove()">✕</button></div>
+    <div class="gdrive-link" style="cursor:default"><span>📂</span><span style="flex:1" contenteditable="true">Household Systems</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer;margin-left:auto" onclick="this.parentElement.remove()">✕</button></div>
+  </div>
+  <div class="row" style="margin-top:7px"><input class="inp" id="drive-input" placeholder="Folder name..." style="flex:1"/><button class="btn btn-ghost" onclick="addDriveLink()">+ Add</button></div>
+  <div class="divider"></div>
+  <p class="sec">Philosophy shelf</p>
+  <div style="display:flex;flex-direction:column;gap:5px">
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Shawn Blanc</strong> — Focus Course / Plan Your Year</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Tiago Forte</strong> — Building a Second Brain / PARA</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Cal Newport</strong> — Digital Minimalism</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">GTD / Zen to Done</strong> — Getting Things Done</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Amy Hann</strong> — Master the Mundane</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Organized Chaos</strong> — Daily / weekly household systems</div>
+    <div style="padding:8px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:.79rem;color:var(--ink2)">📖 <strong style="color:var(--ink)">Mom on Purpose</strong> — CEO of your home</div>
+  </div>
+</div>
+
+
+<!-- ══════════ YEAR ══════════ -->
+<div id="page-year" class="page">
+  <p class="sec">Core values</p>
+  <div class="val-chips" style="margin-bottom:14px">
+    <div class="val-chip vc-sage">Peace & Groundedness</div>
+    <div class="val-chip vc-terra">Trust & Authentic Connection</div>
+    <div class="val-chip vc-sky">Family First</div>
+    <div class="val-chip vc-gold">Small, Consistent Steps</div>
+  </div>
+  <div class="decl"><div class="decl-lbl">Focus Declaration</div><div class="decl-text">"In my life right now, I value peace & groundedness, and trust & authentic connection. I want to focus on my family and move toward building family traditions. Small, consistent steps can result in big change."</div></div>
+  <div class="card"><div style="font-family:'Lora',serif;font-size:.93rem;font-style:italic;line-height:1.7">In 2026, I'm focusing on planning life-giving connection, being active and outside with my kids, and tending to our family's health — because these are the foundations that support everything we build next.</div><div style="margin-top:8px"><span class="tag t-s" style="display:inline-block;padding:3px 8px;border-radius:7px;font-size:.66rem;background:var(--sage-ll);color:var(--sage);margin:2px">Plan simply</span><span class="tag t-t" style="display:inline-block;padding:3px 8px;border-radius:7px;font-size:.66rem;background:var(--terra-ll);color:var(--terra);margin:2px">Follow through consistently</span><span class="tag t-g" style="display:inline-block;padding:3px 8px;border-radius:7px;font-size:.66rem;background:var(--gold-ll);color:var(--gold);margin:2px">Show up, even imperfectly</span></div></div>
+  <div class="g2">
+    <div class="card" style="margin-bottom:0"><div style="display:flex;align-items:flex-start"><div style="font-family:'Lora',serif;font-size:1.7rem;font-weight:400;color:var(--sage-l);line-height:1;margin-right:10px;flex-shrink:0">01</div><div style="flex:1"><div style="font-family:'Lora',serif;font-size:.95rem;font-weight:500">Relationships</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px">Holidays & activities · Weekly planning admin</div><div style="background:var(--surface2);border-radius:3px;height:4px;margin-top:7px;overflow:hidden"><div style="height:100%;width:28%;background:var(--terra);border-radius:3px"></div></div></div></div></div>
+    <div class="card" style="margin-bottom:0"><div style="display:flex;align-items:flex-start"><div style="font-family:'Lora',serif;font-size:1.7rem;font-weight:400;color:var(--sage-l);line-height:1;margin-right:10px;flex-shrink:0">02</div><div style="flex:1"><div style="font-family:'Lora',serif;font-size:.95rem;font-weight:500">Health</div><div style="font-size:.74rem;color:var(--ink2);margin-top:2px">Outside time & movement · Daily movement</div><div style="background:var(--surface2);border-radius:3px;height:4px;margin-top:7px;overflow:hidden"><div style="height:100%;width:42%;background:var(--sage);border-radius:3px"></div></div></div></div></div>
+  </div>
+  <div class="g2" style="align-items:start;margin-top:4px">
+    <div>
+      <p class="sec">Seasonal intentions</p>
+      <div class="sc-card scc-spring"><div class="sc-name">Spring</div><div class="sc-theme">Reset & Refresh</div><div class="sc-notes">Declutter, restart rhythms, open windows</div></div>
+      <div class="sc-card scc-summer"><div class="sc-name">Summer</div><div class="sc-theme">Outside & Adventures</div><div class="sc-notes">Bucket list, parks, library, movement with kids</div></div>
+      <div class="sc-card scc-fall"><div class="sc-name">Fall</div><div class="sc-theme">Routines & Learning</div><div class="sc-notes">Back to school rhythms, new habits, cozy structure</div></div>
+      <div class="sc-card scc-winter"><div class="sc-name">Winter</div><div class="sc-theme">Celebrations & Traditions</div><div class="sc-notes">Build traditions, celebrate, rest well</div></div>
+    </div>
+    <div>
+      <p class="sec">Mantras</p>
+      <div class="mantra"><div class="m-num">1</div><div class="m-text">Small, consistent steps can result in big change.</div></div>
+      <div class="mantra"><div class="m-num">2</div><div class="m-text">Plan simply. Follow through consistently.</div></div>
+      <div class="mantra"><div class="m-num">3</div><div class="m-text">Success looks like showing up, even imperfectly.</div></div>
+      <div class="mantra"><div class="m-num">4</div><div class="m-text">I am the CEO of this home. I set the tone.</div></div>
+      <div class="mantra"><div class="m-num">5</div><div class="m-text">Rest is not the reward — rest is part of the work.</div></div>
+      <p class="sec mt">Areas of responsibility</p>
+      <div class="g2" style="gap:7px;margin-bottom:0">
+        <div class="area-card"><div class="area-icon">🏠</div><div class="area-name">Home</div><div class="area-desc">Maintenance, rhythm, systems</div></div>
+        <div class="area-card"><div class="area-icon">👨‍👩‍👧</div><div class="area-name">Family</div><div class="area-desc">Kids, traditions, connection</div></div>
+        <div class="area-card"><div class="area-icon">💚</div><div class="area-name">Health</div><div class="area-desc">Movement, meals, margin</div></div>
+        <div class="area-card"><div class="area-icon">💛</div><div class="area-name">Marriage</div><div class="area-desc">Connection, date nights</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ LOG ══════════ -->
+<div id="page-log" class="page">
+  <div class="hero h-rose"><div class="hero-ey">Activity Log</div><div class="hero-title">You did things today.</div><div class="hero-sub">Every check, capture, and decision — recorded. You're not invisible.</div></div>
+  <div class="flex-c" style="margin-bottom:11px"><p class="sec" style="margin:0">Today's record</p><button class="btn btn-ghost btn-sm ml-auto" onclick="clearLog()">Clear</button></div>
+  <div id="activity-log"><div style="text-align:center;padding:26px;color:var(--ink3);font-size:.82rem;font-style:italic">Your actions will appear here as you use the OS.</div></div>
+</div>
+
+
+<script>
+// ── STATE ──
+let isWeekend=false,currentEnergy='full',activityLog=[],savedReflections=[],tokenCount=0;
+const subtaskState={laundry:[false,false,false],dishes:[false,false],counters:[false,false,false],dinner:[false,false]};
+const taskDone={laundry:false,dishes:false,counters:false,dinner:false};
+const calDayState={};
+const habitState={};
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const PRIS=['Start laundry (sort → wash)','Unload dishwasher','Decide dinner by noon','Wipe counters','Weekly planning admin','Run dishwasher','Put away laundry','Grocery shop/order','Mom admin block','Meal plan','Declutter','Chuck-it buckets','Toy reset','Paper review'];
+let pIdx=0;
+
+// ── DATE ──
+(function(){
+  const n=new Date();
+  const dl=document.getElementById('today-date-lbl');if(dl)dl.textContent=`${DAYS[n.getDay()]} · ${MONTHS[n.getMonth()]} ${n.getDate()}`;
+  const gt=document.getElementById('today-greeting');const h=n.getHours();if(gt)gt.textContent=h<12?'Good morning.':h<17?'Good afternoon.':'Good evening.';
+  const wl=document.getElementById('week-lbl');if(wl){const s=new Date(n);s.setDate(n.getDate()-n.getDay()+1);const e=new Date(s);e.setDate(s.getDate()+6);wl.textContent=`Week of ${MONTHS[s.getMonth()]} ${s.getDate()} – ${e.getDate()}`;}
+})();
+
+// ── PAGES ──
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='calendar')renderCalendar();
+}
+
+// ── MODE ──
+function toggleMode(){
+  isWeekend=!isWeekend;
+  const b=document.getElementById('mode-toggle');
+  const th=document.getElementById('today-hero'),wh=document.getElementById('weekend-hero');
+  const wb=document.getElementById('weekday-block'),wkb=document.getElementById('weekend-block');
+  if(isWeekend){b.textContent='Weekend';b.className='mode-badge weekend';th.style.display='none';wh.style.display='';wb.style.display='none';wkb.style.display='';logAction('Switched to weekend mode','gold');}
+  else{b.textContent='Weekday';b.className='mode-badge weekday';th.style.display='';wh.style.display='none';wb.style.display='';wkb.style.display='none';setEnergy(currentEnergy);}
+}
+
+// ── ENERGY ──
+function setEnergy(e){
+  currentEnergy=e;
+  const styles={full:{border:'2px solid var(--sage)',background:'var(--sage-ll)',color:'var(--sage)'},low:{border:'2px solid var(--gold)',background:'var(--gold-ll)',color:'var(--gold)'},rest:{border:'2px solid var(--lav)',background:'var(--lav-ll)',color:'var(--lav)'},off:{border:'2px solid var(--border)',background:'var(--surface)',color:'var(--ink3)'}};
+  ['full','low','rest'].forEach(x=>{const b=document.getElementById('e-'+x);Object.assign(b.style,x===e?styles[x]:styles.off);});
+  const rc=document.getElementById('rest-card'),ln=document.getElementById('low-note');
+  if(e==='rest'){Object.assign(rc.style,{display:'block',background:'var(--lav-ll)',border:'1px solid var(--lav-l)'});ln.style.display='none';}
+  else if(e==='low'){rc.style.display='none';ln.style.display='block';}
+  else{rc.style.display='none';ln.style.display='none';}
+  if(e==='rest')logAction('Rest day mode','lav');
+  else if(e==='low')logAction('Low energy mode','gold');
+}
+
+// ── DINNER PIN ──
+let dinnerEditing=false;
+function toggleDinnerEdit(){
+  dinnerEditing=!dinnerEditing;
+  const disp=document.getElementById('dinner-display'),inp=document.getElementById('dinner-input'),btn=document.getElementById('dinner-btn');
+  if(dinnerEditing){disp.style.display='none';inp.style.display='block';inp.value=disp.textContent==='Not set yet'?'':disp.textContent;inp.focus();btn.textContent='✓ Save';}
+  else saveDinner();
+}
+function saveDinner(){
+  const disp=document.getElementById('dinner-display'),inp=document.getElementById('dinner-input'),btn=document.getElementById('dinner-btn');
+  const val=inp.value.trim();
+  disp.textContent=val||'Not set yet';disp.style.display='block';inp.style.display='none';btn.textContent='✎ Edit';dinnerEditing=false;
+  if(val)logAction('🍳 Tonight: '+val,'gold');
+}
+
+// ── TASK GROUPS ──
+function toggleGroup(id){
+  const key=id.replace('tg-','');
+  const st=document.getElementById('sts-'+key);
+  const tog=document.getElementById('tgt-'+key);
+  if(st){st.classList.toggle('open');if(tog)tog.classList.toggle('open');}
+}
+function toggleSub(el,key,idx){
+  el.classList.toggle('done');
+  const chk=el.querySelector('.st-chk');
+  const isDone=el.classList.contains('done');
+  chk.textContent=isDone?'✓':'';
+  subtaskState[key][idx]=isDone;
+  updateTaskGroup(key);
+  if(isDone)logAction('✓ '+el.querySelector('.st-lbl').textContent,'sage');
+}
+function updateTaskGroup(key){
+  const states=subtaskState[key];const total=states.length;const done=states.filter(Boolean).length;
+  const chk=document.getElementById('tgc-'+key);const prog=document.getElementById('tgp-'+key);
+  if(prog)prog.textContent=`${done}/${total}`;
+  if(done===total&&total>0){if(chk){chk.className='tg-check done';chk.textContent='✓';}taskDone[key]=true;}
+  else if(done>0){if(chk){chk.className='tg-check partial';chk.textContent='~';}taskDone[key]=false;}
+  else{if(chk){chk.className='tg-check';chk.textContent='';}taskDone[key]=false;}
+  updateDailyProg();
+}
+function updateDailyProg(){
+  const keys=Object.keys(taskDone);const done=keys.filter(k=>taskDone[k]).length;const total=keys.length;
+  const pct=Math.round(done/total*100);
+  document.getElementById('tp-fill').style.width=pct+'%';document.getElementById('tp-count').textContent=`${done} / ${total}`;
+  keys.forEach((k,i)=>{const dot=document.getElementById('tpd-'+i);if(!dot)return;if(taskDone[k])dot.className='tp-dot done';else if(subtaskState[k]&&subtaskState[k].some(Boolean))dot.className='tp-dot partial';else dot.className='tp-dot';});
+}
+
+// ── PLAIN TASK ──
+function completeTask(el,name){el.classList.toggle('done');const chk=el.querySelector('.tchk');chk.textContent=el.classList.contains('done')?'✓':'';if(el.classList.contains('done'))logAction('✓ '+name,'sage');}
+
+// ── DAILY RHYTHM ──
+function toggleDR(el){el.classList.toggle('done');const chk=el.querySelector('.dr-chk');chk.textContent=el.classList.contains('done')?'✓':'';if(el.classList.contains('done'))logAction('✓ '+el.querySelector('.dr-row-text').textContent,'sage');}
+
+// ── SELF CARE ──
+function toggleSC(el){el.classList.toggle('done');if(el.classList.contains('done'))logAction('💚 '+el.querySelector('span').textContent,'lav');}
+
+// ── HH ──
+function toggleHH(el,name){el.classList.toggle('done');el.querySelector('.hh-chk').textContent=el.classList.contains('done')?'✓':'';if(el.classList.contains('done'))logAction('🏠 '+name,'terra');updateWeekProg();}
+function updateWeekProg(){const all=document.querySelectorAll('#weekly-tasks .hh');const done=document.querySelectorAll('#weekly-tasks .hh.done').length;document.getElementById('week-pf').style.width=Math.round(done/all.length*100)+'%';document.getElementById('week-done-ct').textContent=`${done} / ${all.length} done`;}
+function resetWeek(){document.querySelectorAll('#weekly-tasks .hh').forEach(el=>{el.classList.remove('done');el.querySelector('.hh-chk').textContent='';});updateWeekProg();logAction('↺ Week reset','gold');}
+
+// ── EVENTS ──
+function addEvent(listId,inId,tId){const i=document.getElementById(inId),t=document.getElementById(tId);const v=i.value.trim();if(!v)return;const d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--surface);border-radius:10px;border-left:3px solid var(--sky);margin-bottom:6px;font-size:.82rem';d.innerHTML=`<span style="font-size:.7rem;color:var(--ink3);min-width:48px">${t.value||'—'}</span><span style="flex:1">${v}</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button>`;document.getElementById(listId).appendChild(d);i.value='';t.value='';}
+
+// ── MEALS ──
+async function getSuggestions(){
+  const inv=document.getElementById('inventory-text').value.trim();if(!inv)return;
+  const ld=document.getElementById('ai-loading'),res=document.getElementById('ai-result');
+  ld.style.display='block';res.classList.remove('show');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`Busy working mom, often low energy, picky kids. Inventory: ${inv}. Give me 6 quick weeknight dinners. JSON array only, no preamble or backticks: [{"name":"Meal","desc":"under 10 words","time":"X min"}]`}]})});
+    const data=await r.json();const text=data.content.map(c=>c.text||'').join('');
+    const meals=JSON.parse(text.replace(/```json|```/g,'').trim());
+    const c=document.getElementById('ai-meals');c.innerHTML='';
+    meals.forEach(m=>{const d=document.createElement('div');d.className='ai-meal';d.innerHTML=`<div><strong>${m.name}</strong><div style="font-size:.71rem;color:var(--ink3)">${m.desc} · ${m.time}</div></div><span style="font-size:.63rem;color:var(--terra);margin-left:auto">+ Add</span>`;d.onclick=()=>{const s=document.querySelectorAll('#meal-plan .meal-name');for(let x of s){if(x.textContent==='—'){x.textContent=m.name;logAction('🍽 '+m.name,'gold');return;}}};c.appendChild(d);});
+    ld.style.display='none';res.classList.add('show');logAction('✦ AI meal suggestions ready','gold');
+  }catch(e){ld.style.display='none';document.getElementById('ai-meals').innerHTML='<div style="font-size:.78rem;color:var(--ink3);padding:7px">Unavailable — type meals manually.</div>';res.classList.add('show');}
+}
+
+// ── MONTHLY ──
+function toggleMonthTask(el,name){el.classList.toggle('done');el.querySelector('.mt-chk').textContent=el.classList.contains('done')?'✓':'';if(el.classList.contains('done'))logAction('📅 '+name,'gold');updateMonthProg();}
+function updateMonthProg(){const all=document.querySelectorAll('#monthly-home .month-task, #monthly-family .month-task');const done=[...all].filter(e=>e.classList.contains('done')).length;document.getElementById('month-pf').style.width=Math.round(done/Math.max(all.length,1)*100)+'%';document.getElementById('month-done-ct').textContent=`${done} done`;}
+function resetMonth(){document.querySelectorAll('#monthly-home .month-task, #monthly-family .month-task').forEach(el=>{el.classList.remove('done');el.querySelector('.mt-chk').textContent='';});updateMonthProg();}
+function addMonthTask(){const i=document.getElementById('month-task-input');const cat=document.getElementById('month-task-cat').value;const v=i.value.trim();if(!v)return;const labels={'mc-fam':'Family','mc-hm':'Home','mc-rel':'Connection','mc-adm':'Admin'};const d=document.createElement('div');d.className='month-task';d.setAttribute('onclick',`toggleMonthTask(this,'${v}')`);d.innerHTML=`<div class="mt-chk"></div><div style="flex:1"><div class="mt-lbl">${v}</div></div><span class="month-cat ${cat}">${labels[cat]}</span>`;document.getElementById('monthly-family').appendChild(d);i.value='';updateMonthProg();}
+
+// ── HABITS ──
+function toggleHabit(dot,habit,day){if(!habitState[habit])habitState[habit]=Array(7).fill(false);habitState[habit][day]=!habitState[habit][day];dot.classList.toggle('on');updateStreak(habit);}
+function updateStreak(habit){const s=habitState[habit]||Array(7).fill(false);let streak=0;for(let i=6;i>=0;i--){if(s[i])streak++;else break;}const el=document.getElementById('streak-'+habit);if(el)el.textContent=streak>0?`${streak}🔥`:'—';}
+function resetHabits(){document.querySelectorAll('.h-dot').forEach(d=>d.classList.remove('on'));Object.keys(habitState).forEach(k=>habitState[k]=Array(7).fill(false));['walk','read','journal','phone','water','prayer','kids'].forEach(k=>{const el=document.getElementById('streak-'+k);if(el)el.textContent='—';});}
+
+// ── READING ──
+function addBook(){const i=document.getElementById('book-input'),a=document.getElementById('book-author');const v=i.value.trim();if(!v)return;const d=document.createElement('div');d.className='media-item';d.innerHTML=`<div class="media-emoji">📗</div><div style="flex:1"><div class="media-title">${v}</div><div class="media-author">${a.value||''}</div><div class="media-status ms-reading">Reading</div></div>`;document.getElementById('reading-list').appendChild(d);i.value='';a.value='';}
+function addListen(){const i=document.getElementById('listen-input');const v=i.value.trim();if(!v)return;const d=document.createElement('div');d.className='media-item';d.innerHTML=`<div class="media-emoji">🎙</div><div style="flex:1"><div class="media-title">${v}</div><div class="media-status ms-listening">Listening</div></div>`;document.getElementById('listening-list').appendChild(d);i.value='';}
+
+// ── REFLECTION ──
+function showReflTab(tab,btn){document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('refl-current').style.display=tab==='current'?'':'none';document.getElementById('refl-archive').style.display=tab==='archive'?'':'none';}
+function cyclePri(el){const s=['⬜','✅','❌'];el.textContent=s[(s.indexOf(el.textContent)+1)%s.length];}
+function addBacklog(){const i=document.getElementById('backlog-input');const v=i.value.trim();if(!v)return;const d=document.createElement('div');d.className='backlog-item';d.innerHTML=`<span>⏱</span><span style="flex:1">${v}</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer" onclick="this.parentElement.remove()">✕</button>`;document.getElementById('backlog-list').appendChild(d);i.value='';}
+function saveReflection(){const n=new Date();const ds=`${MONTHS[n.getMonth()]} ${n.getDate()}, ${n.getFullYear()}`;const well=document.querySelector('#refl-current .refl-block.past textarea');savedReflections.unshift({date:ds,well:well?well.value.trim():''});renderArchive();logAction('✦ Reflection saved — '+ds,'lav');const b=event.target;b.textContent='✓ Saved!';setTimeout(()=>b.textContent='✓ Save this reflection',2000);}
+function renderArchive(){const c=document.getElementById('archive-list');if(!savedReflections.length){c.innerHTML='<div style="text-align:center;padding:26px;color:var(--ink3);font-size:.82rem;font-style:italic">No saved reflections yet.</div>';return;}c.innerHTML=savedReflections.map(r=>`<div class="archive-entry"><div style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);font-weight:600;margin-bottom:6px">${r.date}</div>${r.well?`<div style="font-size:.69rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">What went well</div><div style="font-family:'Lora',serif;font-style:italic;font-size:.82rem;color:var(--ink);line-height:1.5;margin-bottom:6px">${r.well}</div>`:''}<div style="font-size:.7rem;color:var(--ink3);font-style:italic">Full reflection saved</div></div>`).join('');}
+
+// ── REWARDS ──
+function pickReward(el){document.querySelectorAll('.reward-tile').forEach(t=>t.classList.remove('picked'));el.classList.add('picked');const text=el.textContent.replace(/\n/g,' ').trim();document.getElementById('reward-picked').style.display='block';document.getElementById('reward-picked-text').textContent=text;logAction('🏆 Reward: '+text,'gold');}
+function pickFun(el){document.querySelectorAll('.fun-tile').forEach(t=>t.classList.remove('picked'));el.classList.add('picked');logAction('✨ Making it fun: '+el.textContent.replace(/\n/g,' ').trim(),'lav');}
+function addToken(){tokenCount++;document.getElementById('token-count').textContent=tokenCount;logAction('🪙 Token earned! Total: '+tokenCount,'gold');}
+function spendToken(){if(tokenCount>0){tokenCount--;document.getElementById('token-count').textContent=tokenCount;logAction('🎉 Token spent — enjoy it!','terra');}}
+
+// ── CALENDAR ──
+const today=new Date();
+function renderCalendar(){
+  const container=document.getElementById('cal-months-container');container.innerHTML='';
+  for(let mo=0;mo<4;mo++){
+    const d=new Date(today.getFullYear(),today.getMonth()+mo,1);
+    container.appendChild(buildMonth(d));
+  }
+  buildWeeklyBars();
+}
+function buildMonth(date){
+  const wrapper=document.createElement('div');wrapper.className='cal-month-block';
+  const year=date.getFullYear(),month=date.getMonth();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const firstDay=(new Date(year,month,1).getDay()+6)%7;// Mon=0
+  const isCurrentMonth=year===today.getFullYear()&&month===today.getMonth();
+  // count completions for pct
+  let doneDays=0,totalPast=0;
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${year}-${month}-${d}`;const dayDate=new Date(year,month,d);
+    if(dayDate<today||(dayDate.getDate()===today.getDate()&&isCurrentMonth)){
+      totalPast++;if(calDayState[key]==='done')doneDays++;}
+  }
+  const pct=totalPast>0?Math.round(doneDays/totalPast*100):0;
+  wrapper.innerHTML=`<div class="cal-month-header"><div class="cal-month-name">${MONTHS[month]} ${year}</div><div class="cal-month-pct">${pct}% complete</div></div>`;
+  const grid=document.createElement('div');grid.className='cal-grid';
+  ['M','T','W','T','F','S','S'].forEach(l=>{const lbl=document.createElement('div');lbl.className='cal-day-label';lbl.textContent=l;grid.appendChild(lbl);});
+  for(let i=0;i<firstDay;i++){const empty=document.createElement('div');empty.className='cal-day empty';grid.appendChild(empty);}
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${year}-${month}-${d}`;const cell=document.createElement('div');
+    const dayDate=new Date(year,month,d);const isToday=dayDate.toDateString()===today.toDateString();
+    const isPast=dayDate<today&&!isToday;const isFuture=dayDate>today&&!isToday;
+    let cls='cal-day ';
+    if(isToday)cls+='today-day';
+    else if(isFuture)cls+='future-day';
+    else if(calDayState[key]==='done')cls+='done-day';
+    else if(calDayState[key]==='partial')cls+='partial-day';
+    else cls+='normal';
+    cell.className=cls;cell.textContent=d;
+    if(!isFuture){cell.onclick=()=>{const states=['','done','partial'];const cur=states.indexOf(calDayState[key]||'');calDayState[key]=states[(cur+1)%states.length]||undefined;renderCalendar();};}
+    grid.appendChild(cell);
+  }
+  wrapper.appendChild(grid);return wrapper;
+}
+function buildWeeklyBars(){
+  const container=document.getElementById('weekly-bars');container.innerHTML='';
+  const year=today.getFullYear(),month=today.getMonth();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const firstDay=(new Date(year,month,1).getDay()+6)%7;
+  // build weeks
+  let weeks=[];let week=[];
+  for(let i=0;i<firstDay;i++)week.push(null);
+  for(let d=1;d<=daysInMonth;d++){week.push(d);if(week.length===7){weeks.push(week);week=[];}}
+  if(week.length>0)weeks.push(week);
+  weeks.forEach((w,wi)=>{
+    const bar=document.createElement('div');bar.style.cssText='margin-bottom:10px';
+    const days=w.filter(Boolean);const done=days.filter(d=>{const k=`${year}-${month}-${d}`;return calDayState[k]==='done';}).length;
+    const partial=days.filter(d=>{const k=`${year}-${month}-${d}`;return calDayState[k]==='partial';}).length;
+    const pct=days.length>0?Math.round((done+partial*.5)/days.length*100):0;
+    const color=pct>=80?'var(--sage)':pct>=50?'var(--gold)':'var(--terra-l)';
+    bar.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="font-size:.68rem;color:var(--ink3);min-width:50px">Week ${wi+1}</div><div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:4px;transition:width .5s"></div></div><div style="font-size:.68rem;color:var(--ink2);font-weight:500;min-width:30px;text-align:right">${pct}%</div></div>`;
+    container.appendChild(bar);
+  });
+}
+
+// ── RESOURCES ──
+function addDriveLink(){const i=document.getElementById('drive-input');const v=i.value.trim();if(!v)return;const d=document.createElement('div');d.className='gdrive-link';d.style.cursor='default';d.innerHTML=`<span>📂</span><span style="flex:1" contenteditable="true">${v}</span><button style="background:none;border:none;color:var(--ink3);cursor:pointer;margin-left:auto" onclick="this.parentElement.remove()">✕</button>`;document.getElementById('gdrive-links').appendChild(d);i.value='';}
+
+// ── LOG ──
+function logAction(text,color){activityLog.unshift({text,color,time:new Date()});renderLog();}
+function renderLog(){const c=document.getElementById('activity-log');if(!activityLog.length){c.innerHTML='<div style="text-align:center;padding:26px;color:var(--ink3);font-size:.82rem;font-style:italic">Your actions will appear here.</div>';return;}c.innerHTML=activityLog.map(e=>{const h=e.time.getHours().toString().padStart(2,'0');const m=e.time.getMinutes().toString().padStart(2,'0');return`<div class="log-item"><span class="log-time">${h}:${m}</span><div class="log-dot ld-${e.color}"></div><span style="flex:1;line-height:1.4">${e.text}</span></div>`;}).join('');}
+function clearLog(){activityLog=[];renderLog();}
+</script>
+</body>
+</html>
